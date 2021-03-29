@@ -30,12 +30,15 @@
 #include "tmr0.h"
 #include "usart.h"
 #include "unipolar.h"
+#include "bipolar.h"
 
 void main(void) {
     uint8_t TKey ;
     TMR0_Initialize();
      SerialPORT_Init();
      UNIPOLAR_MOTOR_Init();
+     DRV8818_Motor_Init();
+     PWM2_Initialize();
      KEY_Init();
      TX1REG=RC1REG; //
      
@@ -43,7 +46,6 @@ void main(void) {
      {
          TKey = KEY_Scan();
          switch(TKey){
-          
              case _KEY_TRG_1_CW :
                  
                  break;
@@ -79,6 +81,20 @@ void interrupter()
     {
         PIR3bits.RC1IF = 0;
         TX1REG=RC1REG; //???????????
+    }
+    //PWM
+    if(TMR2IF == 1){
+        TMR2IF = 0;
+    }
+    //Sensor GPIO interrupter Unipolar
+    if(IOCCFbits.IOCCF4==1 ){
+         Unipolar_StopMotor() ;
+    
+    }
+    //Sensor GPIO interrupter Bipolar 
+    if(IOCCFbits.IOCCF5 ==1){
+        DRV8818_Stop();
+    
     }
 
 

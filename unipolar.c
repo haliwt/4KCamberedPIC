@@ -63,3 +63,18 @@ void Stepper_Motor(int revcnt, uint8_t revdir,uint8_t gapdly)
     }
 
 }
+/****************************************************************************
+    *
+    * Function Name: void Unipolar_StopMotor()
+    * Function :unipolar run function
+    * Input Ref:NO           
+    * Return Ref:NO
+    * 
+ ****************************************************************************/
+ void Unipolar_StopMotor(void)
+ {
+     UNIPOLAR_ON = 1;
+     HAL_STEP = 1;
+     ONE_PHASE =1;
+ 
+ }
