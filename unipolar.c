@@ -1,10 +1,10 @@
 #include "unipolar.h"
 
 
-const float Step_angle = 0.0882     ;  //step angle 
-const uint16_t RPM =500;
-int16_t Step_Count = 4082; //360/0.0882 ; revoulation one circle 
-int16_t Delay = 1; //29;//us   // Step_angle /(6 * RPM)= 0.0882/;  
+const float Step_angle = 0.08822   ;  //step angle =15 ,reduction rate 1:85 -> stepAngle =7.5/85=0.0882
+const uint16_t RPM =500;//500 RPM
+int16_t Step_Count = 4080; //360/7.5/85 ; revoulation one circle 
+int16_t Delay = 1; //1.764ms;//  //delay(s)=(Step_angle) /(6 * RPM)= ;  
 
 
 /****************************************************************************
@@ -37,12 +37,14 @@ void UNIPOLAR_MOTOR_Init(void)
     * Function :unipolar run function
     * Input Ref:revcnt -motor revolution number,revdir =0 CCW revdir =1 CW
     *            Delay(T)= Step_angle/(6*RPM),RPM revolution per minute
+    *            Subdiv= 8;
     * Return Ref:NO
     * 
  ****************************************************************************/
 void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
 {
-    int k,p;
+    int k,p,subdiv=8;
+    
     UNIPOLAR_ON = 0;
     ONE_PHASE=0;  //two - half phase 
     HALF_PHASE =1;
@@ -55,9 +57,9 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
         }
     }
     else{
-        p=revcnt* Step_Count; //Step_Count = 360/Step_angle 
+        p=revcnt* Step_Count * subdiv; //Step_Count = 360/Step_angle 
         DIRECTION  = revdir;
-        for(k=0;k<variate.gSpeedcnt;k++){
+        for(k=0;k<p;k++){
             STEP =1;
             STEP =0;
             __delay_ms(Delay);

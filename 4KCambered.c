@@ -170,14 +170,20 @@ void interrupter()
         TMR2IF = 0;
     }
     //Sensor GPIO interrupter Unipolar
-    if(IOCCFbits.IOCCF4==1 ){
-         Unipolar_StopMotor() ;
-    
-    }
-    //Sensor GPIO interrupter Bipolar 
-    if(IOCCFbits.IOCCF5 ==1){
-        DRV8818_Stop();
-    
+    if(PIR0bits.IOCIF ==1){
+        PIR0bits.INT0IF =0;
+        if(IOCCFbits.IOCCF4==1 ){
+             IOCCFbits.IOCCF4=0;
+            Unipolar_StopMotor() ;
+
+
+        }
+        //Sensor GPIO interrupter Bipolar 
+        if(IOCCFbits.IOCCF5 ==1){
+            IOCCFbits.IOCCF5=0;
+            DRV8818_Stop();
+
+        }
     }
 
 }

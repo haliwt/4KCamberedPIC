@@ -2,11 +2,12 @@
 #include <xc.h>
 
 /***********************************************************
-*
-*
-*
-*
-*
+    *
+    *Function Name:void SENSOR_Init(void)
+    *Function :sensor gpio initial 
+    *Input Ref:NO
+    *Return Ref:NO
+    *
 ***********************************************************/
 void SENSOR_Init(void)
 {
@@ -35,6 +36,11 @@ void SENSOR_Init(void)
   IOCCNbits.IOCCN4 = 1; //Negative Edge 
   IOCCNbits.IOCCN5 = 1;
   
-  GIE =1;
+  PIE0bits.IOCIE =1 ;//interrupt-on-change enable
+  PIR0bits.IOCIF =0 ;
+  IOCCFbits.IOCCF4=0;
+  IOCCFbits.IOCCF5=0;
+  
+  //GIE =1;
   
  }

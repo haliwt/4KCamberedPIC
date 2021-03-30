@@ -46,7 +46,7 @@ volatile uint8_t DispData[3];
 *******************************************************************/
 void  delay_us(uint16_t n)
 {
-    uint16_t i,j=0;
+  uint16_t i,j=0;
 	for(i=0;i<n;i++){
 		asm("nop");
 	}

@@ -11,12 +11,12 @@
 void SerialPORT_Init(void)
 {
     
-    ANSELCbits.ANSELC1 = 0 ; //I/O is digital RC1
+    ANSELCbits.ANSELC1 = 0 ; //I/O is digital RC1 TX
     ANSELCbits.ANSELC2 = 0 ; // RXD is digital RC2
     TRISCbits.TRISC1 = 0; // output IO
     TRISCbits.TRISC2 =1; // input IO
-    RC1PPS = 0x0B;  // RC1 as EUSART2 TX/CK
-    RC2PPS=0x0A;//RC2 as EUSART2 RD
+    RC1PPS = TX1REG;//0x0B;  // RC1 as EUSART2 TX/CK output 
+    RC2PPS= 0x0B;//RC2 as input
     
     //Data be send TXD
     SYNC1 =0; //Asynchronous 
@@ -68,6 +68,9 @@ void USART_BlueToothInit(void)
     
     TX1STA=0X24; //??????????????
     RC1STA=0X90; //???????????
+    
+    
+    
     PIE3bits.RC1IE=1; //EUSARTx receive interrupt enable bit 
     INTCONbits.GIE=1; //global interrupt enable bit
     INTCONbits.PEIE = 1; //

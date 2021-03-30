@@ -52,6 +52,7 @@ void PWM2_Initialize(void)
     
     // Set the PWM2 to the options selected in the User Interface
     RB0PPS = CCP2;
+    
 	ANSELBbits.ANSELB0 = 0;
     TRISBbits.TRISB0 = 0;
     

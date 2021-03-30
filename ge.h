@@ -8,8 +8,8 @@
 #define _XTAL_FREQ  8000000
 
 
-#define	Set(x,y)	((x) |= (1 << (y)))				//??1
-#define	Clr(x,y)	((x) &= ~ (1 << (y)))			//??0
+#define	SetBit(x,y)	((x) |= (1 << (y)))				// set   1
+#define	ClrBit(x,y)	((x) &= ~ (1 << (y)))			// clear 0
 
 #define	bit0(x,y)		(((x) & (1 << (y))) == 0)		//?0?? if(b0(x,y)) ?????0
 #define	bit1(x,y)		((x) & (1 << (y)))				//?1?? if(b1(x,y)) ?????1
