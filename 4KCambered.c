@@ -35,6 +35,7 @@
 
 void main(void) {
     uint8_t TKey;
+     Init_Tm1650();
      Digital_NumberInit();
      TMR0_Initialize();
      SerialPORT_Init();
@@ -46,6 +47,9 @@ void main(void) {
      
      while(1)
      {
+         TM1650_Set(0x68,1) ;
+         TM1650_Set(0x6A,2) ;
+         TM1650_Set(0x6C,3) ;
          TKey = KEY_Scan();
          switch(TKey){
              case _KEY_TRG_1_CW :
