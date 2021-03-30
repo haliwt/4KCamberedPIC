@@ -31,33 +31,93 @@
 #include "usart.h"
 #include "unipolar.h"
 #include "bipolar.h"
+#include "TM1650.h"
 
 void main(void) {
-    uint8_t TKey ;
-    TMR0_Initialize();
+    uint8_t TKey;
+     Digital_NumberInit();
+     TMR0_Initialize();
      SerialPORT_Init();
      UNIPOLAR_MOTOR_Init();
      DRV8818_Motor_Init();
      PWM2_Initialize();
      KEY_Init();
-     TX1REG=RC1REG; //
+    
      
      while(1)
      {
          TKey = KEY_Scan();
          switch(TKey){
              case _KEY_TRG_1_CW :
-                 
+                 variate.gstep_to_index = 0x1;//print message 
+                 variate.gunipolar_en =1;
+                 if(variate.gSpeed_Keyflag == 1){
+                     variate.gSpeedcnt = 1;
+                 }
+                 else{
+                      variate.gSpeedcnt = 5;
+                 }
+                 Stepper_UnipolarMotor(200,0);
+                  
                  break;
              case _KEY_TRG_2_CCW:
-                 
+                 variate.gstep_to_index = 0x2;//print message 
+                 variate.gunipolar_en=2;
+                   if(variate.gSpeed_Keyflag == 1){
+                       variate.gSpeedcnt = 1;
+                 }
+                 else{
+                      variate.gSpeedcnt = 5;
+                 }
+                  Stepper_UnipolarMotor(200,1);
+                
                  break;
              case _KEY_TRG_3_SPEED:
+                  variate.gstep_to_index = 0x3;//print message 
+                  variate.gSpeed_Keyflag =1; //flag bit 
+                  if(variate.gunipolar_en ==1){
+                      variate.gSpeedcnt = 1; //
+                      TKey =  _KEY_TRG_1_CW;
+                  }
+                  else if(variate.gunipolar_en ==2){
+                      variate.gSpeedcnt = 1;
+                      TKey =  _KEY_TRG_2_CCW;
+                   }
+                  
+                  if(variate.gbipolar_en ==1){
+                      variate.getDutyCycle = 600;
+                      TKey =  _KEY_TRG_4_UP; //Duty cycle 
+                   }
+                  else  if(variate.gbipolar_en ==2){
+                      variate.getDutyCycle = 600;
+                      TKey =  _KEY_TRG_5_DOWN; //Duty cycle 
+                   }
+                 
                  break;
              case _KEY_TRG_4_UP:
+                 variate.gstep_to_index = 0x4;//print message 
+                 variate.gbipolar_en =1;
+                 if(variate.gSpeed_Keyflag ==1)
+                     variate.getDutyCycle =500;
+                 else 
+                      variate.getDutyCycle =300;
+                
+                 DIR =1;
+                 DRV8818_MotorDriver();
                  break;
                  
              case _KEY_TRG_5_DOWN:
+                 variate.gstep_to_index = 0x5;//print message 
+                 variate.gbipolar_en =2;
+                if(variate.gSpeed_Keyflag ==1)
+                     variate.getDutyCycle =500;
+                 else 
+                      variate.getDutyCycle =300;
+                 DIR = 0;
+                 DRV8818_MotorDriver();
+                 break;
+             default:
+                 variate.gSpeed_Keyflag =0;
                  break;
         }
     }
@@ -69,12 +129,31 @@ void main(void) {
  * ********************************************************/
 void interrupter()
 {
-    //TIMER0 overflow interrupter 
+    //TIMER0 overflow interrupter 1.0ms
     if(PIE0bits.TMR0IE == 1 && PIR0bits.TMR0IF == 1)
     {
-         PIE0bits.TMR0IE =0;
+        variate.getTime_10ms++;
+        PIE0bits.TMR0IE =0;
          PIR0bits.TMR0IF =0;
          TMR0=0x06;  // load intial value 0x06
+        //10ms
+         if(variate.getTime_10ms > 9){
+            variate.getTime_10ms =0;
+            variate.getTime_100ms ++;
+             
+        }
+        //100ms
+        if(variate.getTime_100ms>99){
+             variate.getTime_100ms =0;
+             variate.getTime_1s ++ ;
+         
+         }
+         //1s
+         if(variate.getTime_1s >9){
+            variate.getTime_1s =0;
+            TX2REG=variate.gstep_to_index ;
+         }
+         
     }
     //usart interrupter 
     if(PIR3bits.RC1IF==1 && PIE3bits.RC1IE ==1) //???????????
@@ -96,7 +175,5 @@ void interrupter()
         DRV8818_Stop();
     
     }
-
-
 
 }

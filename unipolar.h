@@ -5,11 +5,11 @@
 #define UNIPOLAR_ON     PORTDbits.RD0
 #define STEP            PORTDbits.RD2
 #define DIRECTION       PORTDbits.RD1
-#define HAL_STEP        PORTDbits.RD3
-#define ONE_PHASE       PORTDbits.RD4
+#define HALF_PHASE      PORTDbits.RD3   //UCN5804LB 10PIN=1
+#define ONE_PHASE       PORTDbits.RD4   //UCN5804LB 9PIN =0
 
 void UNIPOLAR_MOTOR_Init(void);
-void Stepper_Motor(int revcnt, uint8_t revdir,uint8_t gapdly);
+void Stepper_UnipolarMotor(int revcnt, uint8_t revdir);
 void Unipolar_StopMotor(void);
 
 

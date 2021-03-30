@@ -24,14 +24,17 @@ void SENSOR_Init(void)
   
   ANSELEbits.ANSELE1 = 0;
   TRISEbits.TRISE1 = 1 ; //INPUT IO
+  INT0PPSbits.INT0PPS =PORTEbits.RE1;
   
   ANSELEbits.ANSELE2 = 0;
   TRISEbits.TRISE2 = 1 ; //INPUT IO
+  INT1PPSbits.INT1PPS =PORTEbits.RE2;
+  
   
   //GPIO IOC = interrupter on changed 
   IOCCNbits.IOCCN4 = 1; //Negative Edge 
   IOCCNbits.IOCCN5 = 1;
   
-
-
-}
+  GIE =1;
+  
+ }
