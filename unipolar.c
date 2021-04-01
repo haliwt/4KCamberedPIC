@@ -4,7 +4,7 @@
 const float Step_angle = 0.08822   ;  //step angle =15 ,reduction rate 1:85 -> stepAngle =7.5/85=0.0882
 const uint16_t RPM =500;//500 RPM
 int16_t Step_Count = 4080; //360/7.5/85 ; revoulation one circle 
-int16_t Delay = 10; //0.0294ms;//  //delay(ms)=(Step_angle) /(6 * RPM)= 0.0882*1000/(6*500);  
+int16_t Delay = 1;//10; //0.0294ms;//  //delay(ms)=(Step_angle) /(6 * RPM)= 0.0882*1000/(6*500);  
 
 
 /****************************************************************************
@@ -48,6 +48,7 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
     UNIPOLAR_ON = 0;
     ONE_PHASE=0;   //PIN9 - half phase 
     HALF_PHASE =1;  //PIN10 =0 8 step 
+  
     if(revcnt <0){
         DIRECTION  = revdir;
         while(1){
@@ -65,9 +66,17 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
             __delay_ms(Delay);
             STEP =0;
             __delay_ms(Delay);
+            stop_uni =1;
         }
         for(k=0;k<variate.gSpeedcnt;k++)
             __delay_ms(1);
+        if(stop_uni == 1){
+             stop_uni = 0;
+             UNIPOLAR_ON = 1;
+             HALF_PHASE = 1;
+             ONE_PHASE =1;
+
+        }
     }
 
 }

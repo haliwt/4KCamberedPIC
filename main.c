@@ -52,7 +52,7 @@ void main(void) {
      UNIPOLAR_MOTOR_Init();
      DRV8818_Motor_Init();
      PWM2_Initialize();
-     variate.gSpeedcnt=3;
+     variate.gSpeedcnt=10;
     
      
      while(1)
@@ -62,12 +62,12 @@ void main(void) {
          switch(TKey){
             case _KEY_TRG_1_CW :
                 
-                 Stepper_UnipolarMotor(-1,0);
+                 Stepper_UnipolarMotor(1,0);
                   
             break;
                  
             case _KEY_TRG_2_CCW:
-                Stepper_UnipolarMotor(-1,1);
+                Stepper_UnipolarMotor(1,1);
                 
                  break;
             case _KEY_TRG_3_SPEED:
