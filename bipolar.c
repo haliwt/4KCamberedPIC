@@ -19,23 +19,24 @@ void DRV8818_Motor_Init(void)
    
    ANSELCbits.ANSELC0 = 0;
    TRISCbits.TRISC0 = 0;
-   ENABLE_DRV =1;
+   //ENABLE_DRV =1;
 
 }
 /****************************************************************************
     *
     * Function Name: DRV8818_MotorDriver(void)
     * Function :bipolar motor be drive
-    * Input Ref:NO
+    * Input Ref: 0--up 1 --down
     * Return Ref:NO
     * 
  ****************************************************************************/
-void DRV8818_MotorDriver(void)
+void DRV8818_MotorDriver(uint8_t dir)
 {
-    
+    DIR = dir;
+    SRN = 0;
     RESETn =1; //
     ENABLE_DRV =0;
-    SLEEP_UNI = 1;
+    SLEEP_DRV = 1;
     PWM2_LoadDutyValue(variate.getDutyCycle);
 
 }

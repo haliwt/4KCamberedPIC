@@ -59,34 +59,9 @@ void main(void) {
      {
          
         TKey =KEY_Scan();
-         switch(TKey){
-            case _KEY_TRG_1_CW :
-                
-                 Stepper_UnipolarMotor(1,0);
-                  
-            break;
-                 
-            case _KEY_TRG_2_CCW:
-                Stepper_UnipolarMotor(1,1);
-                
-                 break;
-            case _KEY_TRG_3_SPEED:
-                 Unipolar_StopMotor();
-                 
-            break;
-            
-            case _KEY_TRG_4_UP:
-                
-            break;
-                 
-            case _KEY_TRG_5_DOWN:
-               
-            break;
-            default:
-                variate.gSpeed_Keyflag =0;
-              
-            break;
-        }
+        SysMode(TKey);
+        CheckRun();
+        
 
     }
 }
@@ -153,7 +128,12 @@ void interrupter()
             IOCCFbits.IOCCF5=0;
             DRV8818_Stop();
         }
+      
     }
+      if(PIR0bits.INT2IF ==1){
+            PIR0bits.INT2IF= 0;
+            Unipolar_StopMotor();
+        }
 
 }
 #endif 

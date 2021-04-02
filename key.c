@@ -19,9 +19,27 @@ void KEY_Init(void)
     
     TRISBbits.TRISB1 = 1;    //input GPIO 
     TRISBbits.TRISB2 = 1;    //input GPIO 
-    TRISBbits.TRISB3 = 1;    //input GPIO 
+    TRISBbits.TRISB3 = 1;    //input GPIO  SPPEED 
     TRISBbits.TRISB4 = 1;    //input GPIO 
-    TRISBbits.TRISB5 = 1;    //input GPIO  
+    TRISBbits.TRISB5 = 1;    //input GPIO 
+
+    //GPIO IOC = interrupter on changed 
+   // IOCBPbits.IOCBP3 = 1; //Position  Edge 
+    
+    PIE0bits.IOCIE =1 ;//interrupt-on-change enable
+   // PIR0bits.IOCIF =0 ;
+  //  IOCBFbits.IOCBF3=0;
+   
+     INT2IE=1; 
+     INT2EDG =0;
+     INT2IF = 0;
+    
+    
+    //INTEDG0=0;               //设置下降沿触发中断	                
+  	INT2IE=1;  	            //使能外部中断
+  	GIE=1;                  //开放全局中断
+   
+    
     
 
 }

@@ -43,7 +43,7 @@ void UNIPOLAR_MOTOR_Init(void)
  ****************************************************************************/
 void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
 {
-    uint16_t k,p,subdiv=8;
+    uint16_t k,p;
     
     UNIPOLAR_ON = 0;
     ONE_PHASE=0;   //PIN9 - half phase 
@@ -59,7 +59,7 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
         }
     }
     else{
-        p=revcnt* Step_Count ; //Step_Count = 360/Step_angle 
+        p=(uint16_t)(revcnt* Step_Count) ; //Step_Count = 360/Step_angle 
         DIRECTION  = revdir;
         for(k=0;k<p;k++){
             STEP =1;
