@@ -34,9 +34,10 @@ enum item
     Nothing,
     unibolar_CW,
     unibolar_CCW,
+    motorStop,
     bibolar_UP,
-    bibolar_DOWN,
-    motorStop
+    bibolar_DOWN
+
 };
 uint8_t RunStep;
 uint8_t RunMode;

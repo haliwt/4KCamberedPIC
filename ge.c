@@ -25,11 +25,7 @@ void  delay_us(uint16_t n)
 void SysMode(uint8_t val)
 {
 
-    static uint8_t key_cw;
-    static uint8_t key_ccw;
-    static uint8_t key_up;
-    static uint8_t key_down;
-    static uint8_t key_speed;
+    
     if (!val)
     {
         return;
@@ -84,8 +80,10 @@ void CheckRun(void)
     {
 
     case Nothing:
-        // Unipolar_StopMotor();
-        // DRV8818_Stop();
+        HALF_PHASE = 1;
+        ONE_PHASE = 1;
+        Unipolar_StopMotor();
+        DRV8818_Stop();
 
         break;
 
@@ -111,11 +109,11 @@ void CheckRun(void)
         break;
 
     case motorStop:
-        blink = blink ^ 0x01;
-        if (blink == 1)
-            LED2 = 1;
-        else
-            LED2 = 0;
+        HALF_PHASE = 1;
+        ONE_PHASE = 1;
+        Unipolar_StopMotor();
+        DRV8818_Stop();
+        RunMode = Nothing;
         break;
 
     default:

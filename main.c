@@ -71,7 +71,7 @@ void main(void) {
 
     }
 }
-#if 1
+
 /**********************************************************
  * 
  * TMR0 Overflow 1.0ms interrupter function,
@@ -167,5 +167,26 @@ void __interrupt() Hallsensor(void)
         }
     }
 
+    if (IOCBFbits.IOCBF3 == 1)
+    { 
+        IOCBFbits.IOCBF3 = 0;
+         TKey = 4;
+         HALF_PHASE = 1;
+         ONE_PHASE =1;
+        Unipolar_StopMotor();
+        DRV8818_Stop();
+    }
+    if (IOCBFbits.IOCBF4 == 1)
+    { //UP
+        //LED2 = 0;
+        IOCBFbits.IOCBF4 = 0;
+        TKey = 8;
+    }
+    if (IOCBFbits.IOCBF5 == 1)
+    {   //DWON
+        //LED1 =0;
+        // LED2 =0 ;
+        IOCBFbits.IOCBF5 = 0;
+        TKey = 9;
+    }
 }
-#endif 
