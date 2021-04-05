@@ -25,12 +25,29 @@ typedef struct _varref_
     uint8_t gSpeed_Keyflag;
     uint8_t gSpeedcnt;
     uint16_t getDutyCycle;
+    
 }varref;
 
 varref variate;
+enum item
+{
+    Nothing,
+    unibolar_CW,
+    unibolar_CCW,
+    bibolar_UP,
+    bibolar_DOWN,
+    motorStop
+};
+uint8_t RunStep;
+uint8_t RunMode;
+uint8_t lastMode;
+uint8_t Mode;
+uint8_t TKey;
 
 typedef signed char int8_t;
 void  delay_us(uint16_t n);
+void SysMode(uint8_t vlu);
+void CheckRun(void);
 
 
 

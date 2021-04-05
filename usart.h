@@ -4,7 +4,7 @@
 void SerialPORT_Init(void);
 void USART_BlueToothInit(void);
 
-
+void USART2_Init(void);
 
 
 #endif 

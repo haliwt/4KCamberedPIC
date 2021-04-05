@@ -32,11 +32,12 @@
 #include "bipolar.h"
 #include "TM1650.h"
 #include "sensor.h"
+#include "led.h"
 
 
 
 void main(void) {
-     uint8_t TKey;
+ 
      OSCCON1 = 0b01110000;
      OSCCON2 = 0b01110000;
      OSCFRQ  = 0b00000010;
@@ -48,45 +49,25 @@ void main(void) {
      Init_Tm1650();
      Digital_NumberInit();
      TMR0_Initialize();
-     SerialPORT_Init();
+     //SerialPORT_Init();
      UNIPOLAR_MOTOR_Init();
      DRV8818_Motor_Init();
      PWM2_Initialize();
-     variate.gSpeedcnt=10;
-    
-     
+    // USART_BlueToothInit();
+     USART2_Init();
+     LED_Init();
+
+     variate.gSpeedcnt = 1;
+
      while(1)
      {
-         
-        TKey =KEY_Scan();
-         switch(TKey){
-            case _KEY_TRG_1_CW :
-                
-                 Stepper_UnipolarMotor(1,0);
-                  
-            break;
-                 
-            case _KEY_TRG_2_CCW:
-                Stepper_UnipolarMotor(1,1);
-                
-                 break;
-            case _KEY_TRG_3_SPEED:
-                 Unipolar_StopMotor();
-                 
-            break;
-            
-            case _KEY_TRG_4_UP:
-                
-            break;
-                 
-            case _KEY_TRG_5_DOWN:
-               
-            break;
-            default:
-                variate.gSpeed_Keyflag =0;
-              
-            break;
-        }
+
+       
+        TX1REG=0x04;
+       // TKey =KEY_Scan();
+        SysMode(TKey);
+        CheckRun();
+        
 
     }
 }
@@ -96,8 +77,10 @@ void main(void) {
  * TMR0 Overflow 1.0ms interrupter function,
  * 
  * ********************************************************/
-void interrupter() 
+void __interrupt() Hallsensor(void)
 {
+    
+
     static uint8_t blink=0;
     //TIMER0 overflow interrupter 1.0ms
     if(PIE0bits.TMR0IE == 1 && PIR0bits.TMR0IF == 1)
@@ -131,28 +114,30 @@ void interrupter()
          
     }
     //usart interrupter 
-    if(PIR3bits.RC1IF==1 && PIE3bits.RC1IE ==1) //???????????
+    if(PIR3bits.RC1IF==1 ) //???????????
     {
         PIR3bits.RC1IF = 0;
-        TX1REG=RC1REG; //???????????
+        TX1REG=0x02; //???????????
     }
     //PWM OF TIMER2
     if(PIR4bits.TMR2IF == 1){
         TMR2IF = 0;
         T2PR = 0xF9; //249 period = 0.002s (500Hz)
     }
-    //Sensor GPIO interrupter Unipolar
-    if(PIR0bits.IOCIF ==1){
-        PIR0bits.INT0IF =0;
-        if(IOCCFbits.IOCCF4==1 ){
-             IOCCFbits.IOCCF4=0;
-             Unipolar_StopMotor() ;
-        }
-        //Sensor GPIO interrupter Bipolar 
-        if(IOCCFbits.IOCCF5 ==1){
-            IOCCFbits.IOCCF5=0;
-            DRV8818_Stop();
-        }
+   
+    if(PIR0bits.INT2IF ==1){ //CCW 
+        PIR0bits.INT2IF= 0;
+        //Unipolar_StopMotor();
+        TKey = _KEY_TRG_2_CCW;
+        LED1=1;
+        LED2=0;
+    }
+    if(PIR0bits.INT1IF ==1){  //CW
+        PIR0bits.INT1IF = 0;
+      //  Unipolar_StopMotor();
+        TKey = _KEY_TRG_1_CW;
+        LED2=1;
+        LED1=0;
     }
 
 }

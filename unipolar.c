@@ -1,4 +1,6 @@
 #include "unipolar.h"
+#include "ge.h"
+#include "key.h"
 
 
 const float Step_angle = 0.08822   ;  //step angle =15 ,reduction rate 1:85 -> stepAngle =7.5/85=0.0882
@@ -47,8 +49,9 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
     
     UNIPOLAR_ON = 0;
     ONE_PHASE=0;   //PIN9 - half phase 
-    HALF_PHASE =1;  //PIN10 =0 8 step 
-  
+    HALF_PHASE =1;  //PIN10 =0 8 step
+
+    TKey = KEY_Scan();
     if(revcnt <0){
         DIRECTION  = revdir;
         while(1){
@@ -56,27 +59,21 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
             __delay_ms(Delay);
             STEP = 0;
             __delay_ms(Delay);
+            TKey = KEY_Scan();
         }
     }
     else{
-        p=revcnt* Step_Count ; //Step_Count = 360/Step_angle 
+        p=(uint16_t)(revcnt* Step_Count) ; //Step_Count = 360/Step_angle 
         DIRECTION  = revdir;
         for(k=0;k<p;k++){
+            TKey = KEY_Scan();
             STEP =1;
             __delay_ms(Delay);
             STEP =0;
             __delay_ms(Delay);
-            stop_uni =1;
+            TKey = KEY_Scan();
         }
-        for(k=0;k<variate.gSpeedcnt;k++)
-            __delay_ms(1);
-        if(stop_uni == 1){
-             stop_uni = 0;
-             UNIPOLAR_ON = 1;
-             HALF_PHASE = 1;
-             ONE_PHASE =1;
-
-        }
+        
     }
 
 }

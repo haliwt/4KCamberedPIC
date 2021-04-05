@@ -19,11 +19,39 @@ void KEY_Init(void)
     
     TRISBbits.TRISB1 = 1;    //input GPIO 
     TRISBbits.TRISB2 = 1;    //input GPIO 
-    TRISBbits.TRISB3 = 1;    //input GPIO 
+    TRISBbits.TRISB3 = 1;    //input GPIO  SPPEED 
     TRISBbits.TRISB4 = 1;    //input GPIO 
-    TRISBbits.TRISB5 = 1;    //input GPIO  
-    
+    TRISBbits.TRISB5 = 1;    //input GPIO
 
+    //GPIO IOC = interrupter on changed
+    IOCBPbits.IOCBP3 = 1; //Position  Edge interrupt on changed
+    IOCBPbits.IOCBP4 = 1; //Position  Edge
+    IOCBPbits.IOCBP5 = 1; //Position  Edge
+                          // clear interrupt on changed flag
+    IOCBFbits.IOCBF3 = 0;
+    IOCBFbits.IOCBF4 = 0;
+    IOCBFbits.IOCBF5 = 0;
+
+    //使能外部中断
+
+    // PIR0bits.INT0IF =0;
+    PIR0bits.INT1IF = 0;
+    PIR0bits.INT2IF = 0;
+
+    //	INTCONbits.INT0EDG =1 ;
+    INTCONbits.INT1EDG = 1;
+    INTCONbits.INT2EDG = 1;
+
+    INTCONbits.PEIE = 1;
+    INTCONbits.IPEN = 0;
+
+    //PIE0bits.INT0IE = 1;
+    PIE0bits.INT1IE = 1;
+    PIE0bits.INT2IE = 1;
+
+    PIE0bits.IOCIE = 1;
+
+    GIE = 1; //开放全局中断
 }
 /****************************************************************************
     *

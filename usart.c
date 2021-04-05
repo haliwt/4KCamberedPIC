@@ -58,21 +58,68 @@ void USART_BlueToothInit(void)
 {
     ANSELCbits.ANSELC6 =0;
     ANSELCbits.ANSELC7 =0;
-    TRISCbits.TRISC6= 1; //??C???????
-    TRISCbits.TRISC7 =0; //
-    
-    TX2STAbits.BRGH=1 ; // high baud rate select bit
-    BAUD2CONbits.BRG16=0;  //16 bit baud rate generator select bit 0 is 8 bit
-  
-    SPBRG = 0x17;  //baud rate is 9600bps
-    
-    TX1STA=0X24; //??????????????
-    RC1STA=0X90; //???????????
-    
-    
-    
-    PIE3bits.RC1IE=1; //EUSARTx receive interrupt enable bit 
-    INTCONbits.GIE=1; //global interrupt enable bit
-    INTCONbits.PEIE = 1; //
+    TRISCbits.TRISC6= 1; //
+    TRISCbits.TRISC7 =1; //RX1
 
+    PORTCbits.RC7 = RX1PPSbits.PORT;
+    PORTCbits.RC6 = TX1PPSbits.PORT;
+    //RX1PPS = RC7;
+    //TX1PPS = RC6;
+    RC1STAbits.SPEN=1;       // 串口使能位
+    RC1STAbits.CREN =1;     // 1=允许连续接收 0=禁止连续接收
+    TX1STAbits.TXEN =1;    // TXEN = 1;   // 发送允许
+    
+    TX1STAbits.TX9=0;// TX9 = 0;    // 1：选择9位接收 0：选择8位接收
+    RC1STAbits.RX9=0 ; // RX9 = 0;    // 1：选择9位接收 0：选择8位接收
+   
+    TX1STAbits.TRMT = 0;
+    RC1STAbits.FERR =0;   
+    RC1STAbits.OERR =0;
+
+    // 波特率 = FOSC/[64 (n + 1)] = 8000000/(64*(0+1)) = 115200
+   
+
+    TX1STAbits.SYNC = 0; // SYNC=0 BRGH16=0 BRGH=0 ，FOSC/[64 (n + 1)]
+    BAUD1CONbits.BRG16= 0;
+    TX1STAbits.BRGH = 0;
+    SP1BRG = 51;
 }
+
+void USART2_Init(void)
+{
+
+    ANSELCbits.ANSELC6 = 0;
+    ANSELCbits.ANSELC7 = 0;
+    TRISCbits.TRISC6 = 1; //
+    TRISCbits.TRISC7 = 1; //RX1
+
+    PORTCbits.RC7 = RX1PPSbits.PORT;
+    PORTCbits.RC6 = TX1PPSbits.PORT;
+
+    //Data be send TXD
+    TX1STAbits.SYNC = 0;  //Asynchronous Mode
+    TX1STAbits.CSRC = 0;  // clock source select bit
+    TX1STAbits.TX9 = 0;   //selects 8-bit transmission
+    TX1STAbits.TXEN = 1;  //Transmit Enable bit
+  
+    TX1STAbits.SENDB = 0; //Send break character bit
+    TX1STAbits.TRMT = 0;  //Transmit shift register(TSR)status bit
+    TX1STAbits.TX9D = 0;  //can be address/data bit or a parity bit
+
+    //Data receive RXD
+    RC1STAbits.RX9 = 0;  //8 bit reception enable
+    RC1STAbits.SREN = 1; //Single Receive Enable bit
+    RC1STAbits.CREN = 1; //continuous Receive Enable bit
+
+    RC1STAbits.ADDEN = 0; //Address Detect Enable bit
+    RC1STAbits.FERR = 0;  // Framing Error bit-??? ,unread RCxREG - receive data register
+    RC1STAbits.OERR = 0;  //nothing overflow error
+    RC1STAbits.RX9D = 0;  //ninth bit received data
+
+    TX1STAbits.BRGH = 1;    // high baud rate select bit
+    BAUD1CONbits.BRG16 = 0; //16 bit baud rate generator select bit 0 is 8 bit
+
+    SPBRG = 51; //baud rate is 9600bps
+    TX1REG = 0x05;
+}
+
