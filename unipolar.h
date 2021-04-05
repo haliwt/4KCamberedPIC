@@ -12,9 +12,7 @@ uint8_t stop_uni;
 void UNIPOLAR_MOTOR_Init(void);
 void Stepper_UnipolarMotor(int revcnt, uint8_t revdir);
 void Unipolar_StopMotor(void);
-
-
-
+void StepUnibolar_Driver(void);
 
 
 

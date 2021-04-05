@@ -127,17 +127,22 @@ void __interrupt() Hallsensor(void)
    
     if(PIR0bits.INT2IF ==1){ //CCW 
         PIR0bits.INT2IF= 0;
-        //Unipolar_StopMotor();
-        TKey = _KEY_TRG_2_CCW;
+        Unipolar_StopMotor();
+        TKey = 2;
         LED1=1;
         LED2=0;
+        DIRECTION=0;
+        UNIPOLAR_ON = 0;  //run start 
     }
     if(PIR0bits.INT1IF ==1){  //CW
         PIR0bits.INT1IF = 0;
-      //  Unipolar_StopMotor();
-        TKey = _KEY_TRG_1_CW;
+        Unipolar_StopMotor();
+        TKey = 1;
         LED2=1;
         LED1=0;
+        UNIPOLAR_ON = 0; //run start
+        DIRECTION=1;
+        
     }
 
 }

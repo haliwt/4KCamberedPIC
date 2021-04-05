@@ -59,19 +59,18 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
             __delay_ms(Delay);
             STEP = 0;
             __delay_ms(Delay);
-            TKey = KEY_Scan();
+           
         }
     }
     else{
         p=(uint16_t)(revcnt* Step_Count) ; //Step_Count = 360/Step_angle 
         DIRECTION  = revdir;
         for(k=0;k<p;k++){
-            TKey = KEY_Scan();
-            STEP =1;
+             STEP =1;
             __delay_ms(Delay);
             STEP =0;
             __delay_ms(Delay);
-            TKey = KEY_Scan();
+           
         }
         
     }
@@ -88,7 +87,20 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
  void Unipolar_StopMotor(void)
  {
      UNIPOLAR_ON = 1;
-     HALF_PHASE = 1;
-     ONE_PHASE =1;
+    // HALF_PHASE = 1;
+    // ONE_PHASE =1;
  
+ }
+
+ void StepUnibolar_Driver(void)
+ {
+
+     UNIPOLAR_ON = 0;
+     ONE_PHASE = 0;  //PIN9 - half phase
+     HALF_PHASE = 1; //PIN10 =0 8 step
+     STEP = 1;
+     __delay_ms(Delay);
+     STEP = 0;
+     __delay_ms(Delay);
+     
  }

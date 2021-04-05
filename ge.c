@@ -91,14 +91,14 @@ void CheckRun(void)
 
     case unibolar_CW:
 
-        Stepper_UnipolarMotor(1, 1); // 1--clockwise
+        StepUnibolar_Driver();
 
         break;
 
     case unibolar_CCW: //SW1
 
-        Stepper_UnipolarMotor(1, 0); //0--anti clockwise
-        break;
+        StepUnibolar_Driver();
+         break;
 
     case bibolar_UP: //SW3
         DRV8818_MotorDriver(1, 1);
