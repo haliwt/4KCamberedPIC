@@ -81,7 +81,8 @@ void __interrupt() Hallsensor(void)
 {
     
 
-    static uint8_t blink=0,blink2=0;
+    static uint8_t blink=0,blink2=0,speedValueCCW,
+                    speedValueCW ;
     //TIMER0 overflow interrupter 1.0ms
     if(PIR0bits.TMR0IF == 1)
     {
@@ -94,7 +95,7 @@ void __interrupt() Hallsensor(void)
             variate.getTime_100ms ++;
              
         }
-        //100ms=1s
+        //100ms
         if(variate.getTime_100ms>9){
              variate.getTime_100ms =0;
              variate.getTime_1s ++ ;
@@ -136,6 +137,16 @@ void __interrupt() Hallsensor(void)
         LED2=0;
         DIRECTION=0;
         UNIPOLAR_ON = 0;  //run start 
+        speedValueCCW++;
+        if(speedValueCCW ==1){
+            
+            DelayStepUnibolar = 100;  //max -slowly
+        }
+       
+        else {
+            DelayStepUnibolar = 10; //max  -fast
+            speedValueCCW =0;
+        }
     }
     if(PIR0bits.INT1IF ==1){  //CW
         PIR0bits.INT1IF = 0;
@@ -145,7 +156,15 @@ void __interrupt() Hallsensor(void)
         LED1=0;
         UNIPOLAR_ON = 0; //run start
         DIRECTION=1;
-        
+        speedValueCW++;
+        if (speedValueCW == 1){
+
+            DelayStepUnibolar = 100; //max -slowly
+        }
+        else {
+            DelayStepUnibolar = 10; //max  -fast
+            speedValueCW = 0;
+        }
     }
 
 }

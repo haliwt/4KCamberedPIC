@@ -3,6 +3,7 @@
 #include "ge.h"
 
 uint8_t stop_uni;
+int8_t DelayStepUnibolar ;
 #define UNIPOLAR_ON     PORTDbits.RD0
 #define STEP            PORTDbits.RD2
 #define DIRECTION       PORTDbits.RD1

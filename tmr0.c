@@ -77,7 +77,7 @@ void TMR0_Initialize(void)
     PIE0bits.TMR0IE = 1;
 
     // Set Default Interrupt Handler
-    TMR0_SetInterruptHandler(TMR0_DefaultInterruptHandler);
+    //TMR0_SetInterruptHandler(TMR0_DefaultInterruptHandler);
 
     // T0OUTPS 1:1; T0EN enabled; T016BIT 8-bit; 
     T0CON0 = 0x80;

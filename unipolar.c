@@ -6,7 +6,7 @@
 const float Step_angle = 0.08822   ;  //step angle =15 ,reduction rate 1:85 -> stepAngle =7.5/85=0.0882
 const uint16_t RPM =500;//500 RPM
 int16_t Step_Count = 4080; //360/7.5/85 ; revoulation one circle 
-int16_t Delay = 1;//10; //0.0294ms;//  //delay(ms)=(Step_angle) /(6 * RPM)= 0.0882*1000/(6*500);  
+//10; //0.0294ms;//  //delay(ms)=(Step_angle) /(6 * RPM)= 0.0882*1000/(6*500);  
 
 
 /****************************************************************************
@@ -56,9 +56,9 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
         DIRECTION  = revdir;
         while(1){
             STEP =1;
-            __delay_ms(Delay);
+            delay_us(DelayStepUnibolar);
             STEP = 0;
-            __delay_ms(Delay);
+            delay_us(DelayStepUnibolar);
            
         }
     }
@@ -67,9 +67,9 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
         DIRECTION  = revdir;
         for(k=0;k<p;k++){
              STEP =1;
-            __delay_ms(Delay);
+           delay_us(DelayStepUnibolar);
             STEP =0;
-            __delay_ms(Delay);
+            delay_us(DelayStepUnibolar);
            
         }
         
@@ -78,8 +78,8 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
 }
 /****************************************************************************
     *
-    * Function Name: void Unipolar_StopMotor()
-    * Function :unipolar run function
+    * Function Name: void Unipolar_StopMotor(void)
+    * Function :unipolar run function  10us-max 1ms-mid 100us - slowly
     * Input Ref:NO           
     * Return Ref:NO
     * 
@@ -91,7 +91,14 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
     // ONE_PHASE =1;
  
  }
-
+ /****************************************************************************
+    *
+    * Function Name: void StepUnibolar_Driver(void)
+    * Function :unipolar run function  10us-fast-max 100us-mid 500us - slowly
+    * Input Ref:NO           
+    * Return Ref:NO
+    * 
+ ****************************************************************************/
  void StepUnibolar_Driver(void)
  {
 
@@ -99,8 +106,7 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
      ONE_PHASE = 0;  //PIN9 - half phase
      HALF_PHASE = 1; //PIN10 =0 8 step
      STEP = 1;
-     __delay_ms(Delay);
+     delay_us(DelayStepUnibolar);//delay_us(500); //delay_us(10)//delay_us(100);//__delay_ms(Delay);
      STEP = 0;
-     __delay_ms(Delay);
-     
+     delay_us(DelayStepUnibolar); //delay_us(500) ;//delay_us(10)//delay_us(100);//__delay_ms(Delay);
  }
