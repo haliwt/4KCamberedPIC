@@ -81,12 +81,11 @@ void __interrupt() Hallsensor(void)
 {
     
 
-    static uint8_t blink=0;
+    static uint8_t blink=0,blink2=0;
     //TIMER0 overflow interrupter 1.0ms
-    if(PIE0bits.TMR0IE == 1 && PIR0bits.TMR0IF == 1)
+    if(PIR0bits.TMR0IF == 1)
     {
-        variate.getTime_10ms++;
-        PIE0bits.TMR0IE =0;
+        variate.getTime_10ms++; //1ms
          PIR0bits.TMR0IF =0;
          TMR0=0x06;  // load intial value 0x06
         //10ms
@@ -95,11 +94,15 @@ void __interrupt() Hallsensor(void)
             variate.getTime_100ms ++;
              
         }
-        //100ms
-        if(variate.getTime_100ms>99){
+        //100ms=1s
+        if(variate.getTime_100ms>9){
              variate.getTime_100ms =0;
              variate.getTime_1s ++ ;
-         
+             blink2 = blink2 ^ 0x1;
+             if (blink2 == 1)
+                 LED2 = 1;
+             else
+                 LED2 = 0;
          }
          //1s
          if(variate.getTime_1s >9){
@@ -107,8 +110,8 @@ void __interrupt() Hallsensor(void)
             
              blink = blink ^ 0x1;
             if(blink==1)
-             SENSOR_POWER_UP=1;
-            else SENSOR_POWER_UP=0;
+             LED1=1;
+            else LED1=0;
             TX2REG=variate.gstep_to_index ;
          }
          

@@ -81,6 +81,7 @@ void TMR0_Initialize(void)
 
     // T0OUTPS 1:1; T0EN enabled; T016BIT 8-bit; 
     T0CON0 = 0x80;
+    T0CON0bits.T0EN = 1;
 }
 
 void TMR0_StartTimer(void)
