@@ -63,8 +63,8 @@ void main(void) {
 
        TX1REG = 0x05;
              // TKey =KEY_Scan();
-             SysMode(TKey);
-         CheckRun();
+        SysMode(TKey);
+        CheckRun();
         
 
     }
