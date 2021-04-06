@@ -82,7 +82,6 @@ void CheckRun(void)
 
     case Nothing:
        
-    
         variate.gPositionUp =0;
         variate.gPositionDown =0;
 

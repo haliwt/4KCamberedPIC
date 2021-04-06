@@ -71,6 +71,7 @@ void main(void) {
            variate.gPositionUp =0;
            variate.gPositionDown =0;
            variate.gMotorDir=0;
+           RunMode = 0;
        }
        else {
                 if(variate.gMotorDir==1)
@@ -86,17 +87,18 @@ void main(void) {
                     else if(mV >600){
                         LED2=1;
                         LED1=1;
-                        DRV8818_Stop();
-                        if(variate.gMotorDir==1){ //UP J9
+                     if(variate.gMotorDir==1){ //UP J9
+                             DRV8818_Stop();
                             variate.gPositionUp=1;
                             variate.gPositionDown =0;
                             
                         }
                         else if(variate.gMotorDir==2){ //DWON J11
+                             DRV8818_Stop();
                             variate.gPositionDown=1;
                             variate.gPositionUp =0;
                         }
-                        }
+                    }
                 }
        }
 
