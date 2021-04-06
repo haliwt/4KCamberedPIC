@@ -38,6 +38,8 @@
 
 void main(void) {
  
+     unsigned long mV,vim;
+     static uint8_t powern_on=0;
      OSCCON1 = 0b01110000;
      OSCCON2 = 0b01110000;
      OSCFRQ  = 0b00000010;
@@ -55,11 +57,46 @@ void main(void) {
      PWM2_Initialize();
     // USART_BlueToothInit();
      USART1_Init();
-         LED_Init();
+     ADCC_Initialize();
+     LED_Init();
+
+     SENSOR_POWER_UP=1;
+     SENSOR_POWER_DOWN=1; 
 
      while(1)
      {
-           
+       
+       if(variate.gMotorDir==1)
+          vim= ADCC_GetSingleConversion(channel_ANC4, 10);   //J8 UP
+       else if(variate.gMotorDir==2)
+            vim= ADCC_GetSingleConversion(channel_ANC5, 10); //J11 DOWN
+
+       mV=(vim * 5000)>>10; //mv =(vin *5000)/1024;
+       if(mV < 500){
+          LED1=0;
+          LED2 =0;
+       }
+       else if(mV >500){
+           LED2=1;
+           LED1=1;
+           DRV8818_Stop();
+         if(variate.gMotorDir==1){ //UP J9
+               variate.gPositionUp=1;
+               variate.gPositionDown =0;
+          }
+         else if(variate.gMotorDir==2){ //DWON J11
+              variate.gPositionDown=1;
+              variate.gPositionUp =0;
+              
+        }
+        if(power_on ==0){
+            power_on ++;
+            variate.gPositionUp =0;
+             variate.gPositionDown =0;
+
+        }
+
+       }
 
        TX1REG = 0x05;
              // TKey =KEY_Scan();
@@ -78,9 +115,8 @@ void main(void) {
 void __interrupt() Hallsensor(void)
 {
 
-    uint8_t recdata;
-     static uint8_t blink = 0, blink2 = 0, speedValueCCW,
-                                   speedValueCW;
+     uint8_t recdata;
+     static uint8_t blink = 0, blink2 = 0, speedValueCCW,speedValueCW;
     //TIMER0 overflow interrupter 1.0ms
     if(PIR0bits.TMR0IF == 1)
     {
@@ -102,11 +138,11 @@ void __interrupt() Hallsensor(void)
          if(variate.getTime_1s >9){
             variate.getTime_1s =0;
             
-             blink = blink ^ 0x1;
-            if(blink==1)
-             LED1=1;
-            else LED1=0;
-            TX2REG=variate.gstep_to_index ;
+            // blink = blink ^ 0x1;
+            //if(blink==1)
+             //LED1=1;
+            //else LED1=0;
+            
          }
          
     }
@@ -169,18 +205,30 @@ void __interrupt() Hallsensor(void)
         Unipolar_StopMotor();
         DRV8818_Stop();
     }
-    if (IOCBFbits.IOCBF4 == 1)
+    if (IOCBFbits.IOCBF4 == 1)//SW4 J8-TO motor 
     { //UP
         //LED2 = 0;
         IOCBFbits.IOCBF4 = 0;
         TKey = 8;
+        SENSOR_POWER_UP =0;  //J8
+        variate.gMotorDir=1;
+        if(variate.gPositionUp ==1){
+            DRV8818_Stop();
+            variate.gPositionDown =0;
+        }
     }
-    if (IOCBFbits.IOCBF5 == 1)
-    {   //DWON
+    if (IOCBFbits.IOCBF5 == 1) //SW3 -J11--T0 -BACK mtor DOWN
+    {   //DOWN
         //LED1 =0;
         // LED2 =0 ;
         IOCBFbits.IOCBF5 = 0;
         TKey = 9;
+        SENSOR_POWER_DOWN =0;  //POWER RE0 J11  PORTC = RC4
+         variate.gMotorDir=2;
+        if(variate.gPositionDown ==1){
+            DRV8818_Stop();
+            variate.gPositionUp=0;
+        }
     }
     
     if(PIR3bits.RC1IF ==1)//） // 判断是否为串口接收中断

@@ -66,8 +66,7 @@ void DRV8818_MotorDriver(int16_t revcnt, uint8_t dir)
             __delay_ms(DelayBi);
            
         }
-        for (k = 0; k < variate.gSpeedcnt; k++)
-            __delay_ms(1);
+       
        
     }
 }
@@ -158,5 +157,5 @@ void DRV8818_Stop(void)
 {
     RESETn = 0;       // low power disaple output
     ENABLE_DRV = 1;   //disable output PWM
-    T2CONbits.ON = 0; //Timer is OFF
+    //T2CONbits.ON = 0; //Timer is OFF
 }

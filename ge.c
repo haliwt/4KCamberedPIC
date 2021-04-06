@@ -3,6 +3,7 @@
 #include "bipolar.h"
 #include "key.h"
 #include "led.h"
+#include "sensor.h"
 /******************************************************************
     *
     *Function Name:void delay_us(uint16_t n)
@@ -99,12 +100,23 @@ void CheckRun(void)
          break;
 
     case bibolar_UP: //SW3
-        DRV8818_MotorDriver(1, 1);
+        if( variate.gPositionUp==1){
+            DRV8818_Stop();
+            variate.gPositionDown=0; 
+        }
+        else  DRV8818_MotorDriver(1, 1);
+        
 
         break;
 
     case bibolar_DOWN:
-        DRV8818_MotorDriver(1, 0);
+        if( variate.gPositionDown==1){
+             DRV8818_Stop();
+             variate.gPositionUp=0;
+        }  //
+        else
+            DRV8818_MotorDriver(1, 0);
+        if()
 
         break;
 
@@ -114,6 +126,8 @@ void CheckRun(void)
         Unipolar_StopMotor();
         DRV8818_Stop();
         RunMode = Nothing;
+        SENSOR_POWER_UP=1;
+        SENSOR_POWER_DOWN=1; 
         break;
 
     default:

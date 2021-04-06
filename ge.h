@@ -23,8 +23,9 @@ typedef struct _varref_
     uint8_t getTime_1s;
     uint8_t gstep_to_index;
     uint8_t gSpeed_Keyflag;
-    uint8_t gSpeedcnt;
-    uint16_t getDutyCycle;
+    uint8_t gMotorDir;
+    uint8_t gPositionUp;
+    uint8_t gPositionDown;
     
 }varref;
 
