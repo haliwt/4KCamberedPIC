@@ -103,9 +103,10 @@ void CheckRun(void)
         if( variate.gPositionUp==1){
             DRV8818_Stop();
             variate.gPositionDown=0; 
+            variate.gCountUp=0;
         }
         else  DRV8818_MotorDriver(1, 1);
-        
+        if(variate.gCountDown >1)variate.gPositionDown =0;
 
         break;
 
@@ -113,10 +114,11 @@ void CheckRun(void)
         if( variate.gPositionDown==1){
              DRV8818_Stop();
              variate.gPositionUp=0;
+             variate.gCountDown =0;
         }  //
         else
             DRV8818_MotorDriver(1, 0);
-        if()
+        if(variate.gCountUp >1)variate.gPositionUp =0;
 
         break;
 

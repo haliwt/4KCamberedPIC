@@ -39,7 +39,7 @@
 void main(void) {
  
      unsigned long mV,vim;
-     static uint8_t powern_on=0;
+     static uint8_t power_on=0;
      OSCCON1 = 0b01110000;
      OSCCON2 = 0b01110000;
      OSCFRQ  = 0b00000010;
@@ -72,31 +72,30 @@ void main(void) {
             vim= ADCC_GetSingleConversion(channel_ANC5, 10); //J11 DOWN
 
        mV=(vim * 5000)>>10; //mv =(vin *5000)/1024;
-       if(mV < 500){
+       if(mV < 600){
           LED1=0;
           LED2 =0;
        }
-       else if(mV >500){
+       else if(mV >600){
            LED2=1;
            LED1=1;
            DRV8818_Stop();
          if(variate.gMotorDir==1){ //UP J9
                variate.gPositionUp=1;
                variate.gPositionDown =0;
+              
           }
          else if(variate.gMotorDir==2){ //DWON J11
               variate.gPositionDown=1;
               variate.gPositionUp =0;
-              
         }
-        if(power_on ==0){
+        }
+       if(power_on ==0){
             power_on ++;
             variate.gPositionUp =0;
-             variate.gPositionDown =0;
+            variate.gPositionDown =0;
 
         }
-
-       }
 
        TX1REG = 0x05;
              // TKey =KEY_Scan();
@@ -137,11 +136,8 @@ void __interrupt() Hallsensor(void)
          //1s
          if(variate.getTime_1s >9){
             variate.getTime_1s =0;
-            
-            // blink = blink ^ 0x1;
-            //if(blink==1)
-             //LED1=1;
-            //else LED1=0;
+            variate.gCountUp++;
+            variate.gCountDown++;
             
          }
          
@@ -215,6 +211,7 @@ void __interrupt() Hallsensor(void)
         if(variate.gPositionUp ==1){
             DRV8818_Stop();
             variate.gPositionDown =0;
+            variate.gCountUp=0;
         }
     }
     if (IOCBFbits.IOCBF5 == 1) //SW3 -J11--T0 -BACK mtor DOWN
@@ -228,6 +225,7 @@ void __interrupt() Hallsensor(void)
         if(variate.gPositionDown ==1){
             DRV8818_Stop();
             variate.gPositionUp=0;
+            variate.gCountDown =0;
         }
     }
     

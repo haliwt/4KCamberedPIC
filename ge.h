@@ -26,6 +26,8 @@ typedef struct _varref_
     uint8_t gMotorDir;
     uint8_t gPositionUp;
     uint8_t gPositionDown;
+    uint8_t gCountUp;
+    uint8_t gCountDown;
     
 }varref;
 
