@@ -1,5 +1,5 @@
 #include "usart.h"
-#include <xc.h>
+
 /****************************************************************************
     * 
     * Function Name:void SerialPORT_Init(void)
@@ -56,52 +56,51 @@ void SerialPORT_Init(void)
  * *************************************************************************/
 void USART_BlueToothInit(void)
 {
-    ANSELCbits.ANSELC6 =0;
-    ANSELCbits.ANSELC7 =0;
-    TRISCbits.TRISC6= 1; //
-    TRISCbits.TRISC7 =1; //RX1
-
-    PORTCbits.RC7 = RX1PPSbits.PORT;
-    PORTCbits.RC6 = TX1PPSbits.PORT;
-    //RX1PPS = RC7;
-    //TX1PPS = RC6;
-    RC1STAbits.SPEN=1;       // 串口使能位
-    RC1STAbits.CREN =1;     // 1=允许连续接收 0=禁止连续接收
-    TX1STAbits.TXEN =1;    // TXEN = 1;   // 发送允许
-    
-    TX1STAbits.TX9=0;// TX9 = 0;    // 1：选择9位接收 0：选择8位接收
-    RC1STAbits.RX9=0 ; // RX9 = 0;    // 1：选择9位接收 0：选择8位接收
-   
-    TX1STAbits.TRMT = 0;
-    RC1STAbits.FERR =0;   
-    RC1STAbits.OERR =0;
-
-    // 波特率 = FOSC/[64 (n + 1)] = 8000000/(64*(0+1)) = 115200
-   
-
-    TX1STAbits.SYNC = 0; // SYNC=0 BRGH16=0 BRGH=0 ，FOSC/[64 (n + 1)]
-    BAUD1CONbits.BRG16= 0;
-    TX1STAbits.BRGH = 0;
-    SP1BRG = 51;
-}
-
-void USART2_Init(void)
-{
 
     ANSELCbits.ANSELC6 = 0;
     ANSELCbits.ANSELC7 = 0;
     TRISCbits.TRISC6 = 1; //
     TRISCbits.TRISC7 = 1; //RX1
 
-    PORTCbits.RC7 = RX1PPSbits.PORT;
-    PORTCbits.RC6 = TX1PPSbits.PORT;
+    RX1PPSbits.PORT = RC7;
+    TX1PPSbits.PORT = RC6;
 
-    //Data be send TXD
-    TX1STAbits.SYNC = 0;  //Asynchronous Mode
-    TX1STAbits.CSRC = 0;  // clock source select bit
-    TX1STAbits.TX9 = 0;   //selects 8-bit transmission
-    TX1STAbits.TXEN = 1;  //Transmit Enable bit
+    /*串口初始化*/
+    SPBRGH=0;
+    SPBRGL = 51; //9600
+
+    TX1STAbits.BRGH = 0;
+    BAUD1CONbits.BRG16 = 1; //??8??????
+
+    TX1STAbits.SYNC = 0;
+    RC1STAbits.SPEN = 1;
+
+    TX1STAbits.TXEN = 1;
+    /*串口初始化结束*/
+
+}   
+
+
+
+void USART1_Init(void)
+{
+
+    ANSELCbits.ANSELC6 = 0;
+    ANSELCbits.ANSELC7 = 0;
+    TRISCbits.TRISC6 = 0; //
+    TRISCbits.TRISC7 = 1; //RX1
+
+    RX1PPSbits.RXPPS = PORTCbits.RC7 ;
+   RC6PPS = 0x09; 
+  // TX1PPSbits.TXPPS=PORTCbits.RC6;
+   
   
+    //Data be send TXD
+    TX1STAbits.SYNC = 0; //Asynchronous Mode
+    TX1STAbits.CSRC = 0; // clock source select bit
+    TX1STAbits.TX9 = 0;  //selects 8-bit transmission
+    TX1STAbits.TXEN = 1; //Transmit Enable bit
+
     TX1STAbits.SENDB = 0; //Send break character bit
     TX1STAbits.TRMT = 0;  //Transmit shift register(TSR)status bit
     TX1STAbits.TX9D = 0;  //can be address/data bit or a parity bit
@@ -115,11 +114,23 @@ void USART2_Init(void)
     RC1STAbits.FERR = 0;  // Framing Error bit-??? ,unread RCxREG - receive data register
     RC1STAbits.OERR = 0;  //nothing overflow error
     RC1STAbits.RX9D = 0;  //ninth bit received data
-
+    BAUD1CONbits.SCKP=0;
+    BAUD1CONbits.WUE=0;
+    
     TX1STAbits.BRGH = 1;    // high baud rate select bit
     BAUD1CONbits.BRG16 = 0; //16 bit baud rate generator select bit 0 is 8 bit
+    
 
     SPBRG = 51; //baud rate is 9600bps
-    TX1REG = 0x05;
+   
+   PIE3bits.RC1IE = 1; // 使能接收中断
+    PEIE = 0X1; // 使能外部中断
+    GIE = 0X1; // 开放全局中断
+
 }
 
+void send232byte(uint8_t bytebuf)
+{
+    TX1REG = bytebuf;
+    while (TX1STAbits.TRMT == 0);
+}

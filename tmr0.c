@@ -137,19 +137,7 @@ void TMR0_ISR(void)
     // add your TMR0 interrupt custom code
 }
 
-void TMR0_CallBack(void)
-{
-    // Add your custom callback code here
 
-    if(TMR0_InterruptHandler)
-    {
-        TMR0_InterruptHandler();
-    }
-}
-
-void TMR0_SetInterruptHandler(void (* InterruptHandler)(void)){
-    TMR0_InterruptHandler = InterruptHandler;
-}
 
 void TMR0_DefaultInterruptHandler(void){
     // add your TMR0 interrupt custom code

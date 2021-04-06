@@ -16,7 +16,7 @@ void  delay_us(uint16_t n)
     uint16_t i,j=0;
     for(j=0;j<n;j++){
         for(i=0;i<8;i++){
-            asm("nop");
+            __asm("nop");
         }
     }
     

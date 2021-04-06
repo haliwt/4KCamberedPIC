@@ -54,19 +54,17 @@ void main(void) {
      DRV8818_Motor_Init();
      PWM2_Initialize();
     // USART_BlueToothInit();
-     USART2_Init();
-     LED_Init();
-
-     variate.gSpeedcnt = 1;
+     USART1_Init();
+         LED_Init();
 
      while(1)
      {
+           
 
-       
-        TX1REG=0x04;
-       // TKey =KEY_Scan();
-        SysMode(TKey);
-        CheckRun();
+       TX1REG = 0x05;
+             // TKey =KEY_Scan();
+             SysMode(TKey);
+         CheckRun();
         
 
     }
@@ -79,10 +77,10 @@ void main(void) {
  * ********************************************************/
 void __interrupt() Hallsensor(void)
 {
-    
 
-    static uint8_t blink=0,blink2=0,speedValueCCW,
-                    speedValueCW ;
+    uint8_t recdata;
+     static uint8_t blink = 0, blink2 = 0, speedValueCCW,
+                                   speedValueCW;
     //TIMER0 overflow interrupter 1.0ms
     if(PIR0bits.TMR0IF == 1)
     {
@@ -99,11 +97,6 @@ void __interrupt() Hallsensor(void)
         if(variate.getTime_100ms>9){
              variate.getTime_100ms =0;
              variate.getTime_1s ++ ;
-             blink2 = blink2 ^ 0x1;
-             if (blink2 == 1)
-                 LED2 = 1;
-             else
-                 LED2 = 0;
          }
          //1s
          if(variate.getTime_1s >9){
@@ -188,5 +181,17 @@ void __interrupt() Hallsensor(void)
         // LED2 =0 ;
         IOCBFbits.IOCBF5 = 0;
         TKey = 9;
+    }
+    
+    if(PIR3bits.RC1IF ==1)//） // 判断是否为串口接收中断
+    {
+
+        PIR3bits.RC1IF = 0;
+
+        recdata = RC1REG; // 接收数据并存储
+
+        TX1REG = recdata; // 返送接收到的数据 // 把接
+
+       // 收到的数据发送回去
     }
 }
