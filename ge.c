@@ -81,10 +81,10 @@ void CheckRun(void)
     {
 
     case Nothing:
-        HALF_PHASE = 1;
-        ONE_PHASE = 1;
-        Unipolar_StopMotor();
-        DRV8818_Stop();
+       
+    
+        variate.gPositionUp =0;
+        variate.gPositionDown =0;
 
         break;
 
@@ -128,8 +128,9 @@ void CheckRun(void)
         Unipolar_StopMotor();
         DRV8818_Stop();
         RunMode = Nothing;
-        SENSOR_POWER_UP=1;
-        SENSOR_POWER_DOWN=1; 
+        variate.gMotorDir=0;
+        variate.gPositionUp =0;
+        variate.gPositionDown =0;
         break;
 
     default:

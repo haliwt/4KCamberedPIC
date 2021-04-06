@@ -66,36 +66,39 @@ void main(void) {
      while(1)
      {
        
-       if(variate.gMotorDir==1)
-          vim= ADCC_GetSingleConversion(channel_ANC4, 10);   //J8 UP
-       else if(variate.gMotorDir==2)
-            vim= ADCC_GetSingleConversion(channel_ANC5, 10); //J11 DOWN
-
-       mV=(vim * 5000)>>10; //mv =(vin *5000)/1024;
-       if(mV < 600){
-          LED1=0;
-          LED2 =0;
+       if(power_on ==0 ){
+           power_on ++;
+           variate.gPositionUp =0;
+           variate.gPositionDown =0;
+           variate.gMotorDir=0;
        }
-       else if(mV >600){
-           LED2=1;
-           LED1=1;
-           DRV8818_Stop();
-         if(variate.gMotorDir==1){ //UP J9
-               variate.gPositionUp=1;
-               variate.gPositionDown =0;
-              
-          }
-         else if(variate.gMotorDir==2){ //DWON J11
-              variate.gPositionDown=1;
-              variate.gPositionUp =0;
-        }
-        }
-       if(power_on ==0){
-            power_on ++;
-            variate.gPositionUp =0;
-            variate.gPositionDown =0;
-
-        }
+       else {
+                if(variate.gMotorDir==1)
+                    vim= ADCC_GetSingleConversion(channel_ANC4, 10);   //J8 UP
+                else if(variate.gMotorDir==2)
+                        vim= ADCC_GetSingleConversion(channel_ANC5, 10); //J11 DOWN
+                if(variate.gMotorDir==1 ||variate.gMotorDir==2){
+                    mV=(vim * 5000)>>10; //mv =(vin *5000)/1024;
+                    if(mV < 600){
+                        LED1=0;
+                        LED2 =0;
+                    }
+                    else if(mV >600){
+                        LED2=1;
+                        LED1=1;
+                        DRV8818_Stop();
+                        if(variate.gMotorDir==1){ //UP J9
+                            variate.gPositionUp=1;
+                            variate.gPositionDown =0;
+                            
+                        }
+                        else if(variate.gMotorDir==2){ //DWON J11
+                            variate.gPositionDown=1;
+                            variate.gPositionUp =0;
+                        }
+                        }
+                }
+       }
 
        TX1REG = 0x05;
              // TKey =KEY_Scan();
@@ -146,6 +149,7 @@ void __interrupt() Hallsensor(void)
     if(PIR3bits.RC1IF==1 ) //???????????
     {
         PIR3bits.RC1IF = 0;
+
         TX1REG=0x02; //???????????
     }
     //PWM OF TIMER2
@@ -162,6 +166,7 @@ void __interrupt() Hallsensor(void)
         LED2=0;
         DIRECTION=0;
         UNIPOLAR_ON = 0;  //run start 
+        variate.gMotorDir=0;
         speedValueCCW++;
         if(speedValueCCW ==1){
             
@@ -181,6 +186,7 @@ void __interrupt() Hallsensor(void)
         LED1=0;
         UNIPOLAR_ON = 0; //run start
         DIRECTION=1;
+         variate.gMotorDir=0;
         speedValueCW++;
         if (speedValueCW == 1){
 
@@ -192,14 +198,17 @@ void __interrupt() Hallsensor(void)
         }
     }
 
-    if (IOCBFbits.IOCBF3 == 1)
+    if (IOCBFbits.IOCBF3 == 1) //STOP 
     { 
         IOCBFbits.IOCBF3 = 0;
+        variate.gMotorDir=0;
          TKey = 4;
          HALF_PHASE = 1;
          ONE_PHASE =1;
         Unipolar_StopMotor();
         DRV8818_Stop();
+        variate.gPositionUp =0;
+        variate.gPositionDown =0;
     }
     if (IOCBFbits.IOCBF4 == 1)//SW4 J8-TO motor 
     { //UP
