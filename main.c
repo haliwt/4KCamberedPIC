@@ -55,8 +55,8 @@ void main(void) {
      UNIPOLAR_MOTOR_Init();
      DRV8818_Motor_Init();
      PWM2_Initialize();
-   // USART_BlueToothInit();
-     USART1_Init();
+    USART_BlueToothInit();
+   //  USART1_Init();
      ADCC_Initialize();
      LED_Init();
 
@@ -65,7 +65,7 @@ void main(void) {
 
      while(1)
      {
-       
+         TX1REG = 0x04;
        if(power_on ==0 ){
            power_on ++;
            variate.gPositionUp =0;
@@ -102,7 +102,7 @@ void main(void) {
                 }
        }
 
-       
+       TX1REG = 0x05;
              // TKey =KEY_Scan();
         SysMode(TKey);
         CheckRun();
@@ -143,23 +143,15 @@ void __interrupt() Hallsensor(void)
             variate.getTime_1s =0;
             variate.gCountUp++;
             variate.gCountDown++;
+            blink =blink ^ 0x01;
+            if(blink==1)LED1=1;
+            else LED1=0;
             
          }
          
     }
-    //usart interrupter 
-    if(PIR3bits.RC1IF==1 ) //???????????
-    {
-        PIR3bits.RC1IF = 0;
-
-        TX1REG=0x02; //???????????
-    }
-    //PWM OF TIMER2
-    if(PIR4bits.TMR2IF == 1){
-        TMR2IF = 0;
-        T2PR = 0xF9; //249 period = 0.002s (500Hz)
-    }
-   
+  
+ 
     if(PIR0bits.INT2IF ==1){ //CCW 
         PIR0bits.INT2IF= 0;
         Unipolar_StopMotor();
@@ -245,10 +237,16 @@ void __interrupt() Hallsensor(void)
 
         PIR3bits.RC1IF = 0;
 
-        recdata = RC1REG; // 接收数据并存储
+        //recdata = RC1REG; // 接收数据并存储
 
-        TX1REG = recdata; // 返送接收到的数据 // 把接
+        TX1REG = 8; // 返送接收到的数据 // 把接
 
        // 收到的数据发送回去
     }
+     if(PIR3bits.TX1IF ==1){
+         PIR3bits.TX1IF =0;
+         TX1REG = 9;
+     
+     
+     }
 }
