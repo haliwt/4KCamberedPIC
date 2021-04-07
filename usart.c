@@ -62,20 +62,22 @@ void USART_BlueToothInit(void)
     TRISCbits.TRISC6 = 1; //
     TRISCbits.TRISC7 = 1; //RX1
 
-    RX1PPSbits.RXPPS  = RC7;
-    TX1PPSbits.TXPPS  = RC6;
+    RX1PPSbits.RXPPS  = RXD1;//RC7;
+    TX1PPSbits.TXPPS  = TXD1;//RC6;
 
     /*串口初始化*/
-    SPBRGH=0;
-    SPBRGL = 51; //9600
-
-    TX1STAbits.BRGH = 0;
-    BAUD1CONbits.BRG16 = 1; //??8??????
-
     TX1STAbits.SYNC = 0;
     RC1STAbits.SPEN = 1;
 
     TX1STAbits.TXEN = 1;
+
+    TX1STAbits.BRGH = 0;
+    BAUD1CONbits.BRG16 = 1; //??8??????
+    
+    SPBRGH=0;
+    SPBRGL = 51; //9600
+
+    
     /*串口初始化结束*/
 
 }   
@@ -90,9 +92,8 @@ void USART1_Init(void)
     TRISCbits.TRISC6 = 0; //
     TRISCbits.TRISC7 = 1; //RX1
 
-    RX1PPSbits.RXPPS = PORTCbits.RC7 ;
-   RC6PPS = 0x09; 
-  // TX1PPSbits.TXPPS=PORTCbits.RC6;
+    RX1PPSbits.RXPPS  = RXD1;//RC7;
+    TX1PPSbits.TXPPS  = TXD1;//RC6;
    
   
     //Data be send TXD
@@ -123,7 +124,7 @@ void USART1_Init(void)
 
     SPBRG = 51; //baud rate is 9600bps
    
-   PIE3bits.RC1IE = 1; // 使能接收中断
+    PIE3bits.RC1IE = 1; // 使能接收中断
     PEIE = 0X1; // 使能外部中断
     GIE = 0X1; // 开放全局中断
 

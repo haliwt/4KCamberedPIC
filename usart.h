@@ -2,6 +2,9 @@
 #define _USART_H
 #include "ge.h"
 
+#define RXD1 PORTCbits.RC7
+#define TXD1 PORTCbits.RC6
+
 void SerialPORT_Init(void);
 void USART_BlueToothInit(void);
 
