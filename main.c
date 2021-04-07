@@ -34,7 +34,7 @@
 #include "sensor.h"
 #include "led.h"
 
-uint8_t redata;
+uint8_t receBuf;
 
 void main(void) {
  
@@ -67,8 +67,8 @@ void main(void) {
      while(1)
      {
          
-     
-         TX1REG = 0xcd;
+         receBuf = RC1REG;
+        // TX1REG = 0xcd;
        if(power_on ==0 ){
            power_on ++;
            variate.gPositionUp =0;
@@ -122,7 +122,7 @@ void main(void) {
 void __interrupt() Hallsensor(void)
 {
 
-     uint8_t recdata;
+  
      static uint8_t blink = 0, blink2 = 0, speedValueCCW,speedValueCW;
     //TIMER0 overflow interrupter 1.0ms
     if(PIR0bits.TMR0IF == 1)
@@ -235,11 +235,11 @@ void __interrupt() Hallsensor(void)
         }
     }
     
-    if(PIR3bits.RC1IF ==1)//） // 判断是否为串口接收中断
+    if(PIR3bits.RC1IF ==1)    // 判断是否为串口接收中断
     {
          PIR3bits.RC1IF = 0;
-         redata = RC1REG;
-          TX1REG = redata;
+         receBuf = RC1REG;
+         TX1REG = receBuf;
          
 
        // 收到的数据发送回去
