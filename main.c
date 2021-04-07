@@ -55,8 +55,8 @@ void main(void) {
      UNIPOLAR_MOTOR_Init();
      DRV8818_Motor_Init();
      PWM2_Initialize();
-    // USART_BlueToothInit();
-     USART1_Init();
+    USART_BlueToothInit();
+   //  USART1_Init();
      ADCC_Initialize();
      LED_Init();
 
@@ -65,7 +65,7 @@ void main(void) {
 
      while(1)
      {
-       
+         TX1REG = 0x04;
        if(power_on ==0 ){
            power_on ++;
            variate.gPositionUp =0;

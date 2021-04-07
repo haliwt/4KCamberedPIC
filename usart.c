@@ -62,8 +62,8 @@ void USART_BlueToothInit(void)
     TRISCbits.TRISC6 = 1; //
     TRISCbits.TRISC7 = 1; //RX1
 
-    RX1PPSbits.PORT = RC7;
-    TX1PPSbits.PORT = RC6;
+    RX1PPSbits.RXPPS  = RC7;
+    TX1PPSbits.TXPPS  = RC6;
 
     /*串口初始化*/
     SPBRGH=0;
