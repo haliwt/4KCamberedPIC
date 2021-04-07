@@ -34,10 +34,11 @@
 #include "sensor.h"
 #include "led.h"
 
-
+uint8_t redata;
 
 void main(void) {
  
+     
      unsigned long mV,vim;
      static uint8_t power_on=0;
      OSCCON1 = 0b01110000;
@@ -65,7 +66,9 @@ void main(void) {
 
      while(1)
      {
-         TX1REG = 0x04;
+         
+     
+         TX1REG = 0xcd;
        if(power_on ==0 ){
            power_on ++;
            variate.gPositionUp =0;
@@ -102,10 +105,10 @@ void main(void) {
                 }
        }
 
-       TX1REG = 0x05;
              // TKey =KEY_Scan();
         SysMode(TKey);
         CheckRun();
+        //TX1REG = 0xAB;
         
 
     }
@@ -234,19 +237,16 @@ void __interrupt() Hallsensor(void)
     
     if(PIR3bits.RC1IF ==1)//） // 判断是否为串口接收中断
     {
-
-        PIR3bits.RC1IF = 0;
-
-        //recdata = RC1REG; // 接收数据并存储
-
-        TX1REG = 8; // 返送接收到的数据 // 把接
+         PIR3bits.RC1IF = 0;
+         redata = RC1REG;
+          TX1REG = redata;
+         
 
        // 收到的数据发送回去
     }
-     if(PIR3bits.TX1IF ==1){
-         PIR3bits.TX1IF =0;
-         TX1REG = 9;
-     
-     
-     }
+    
+   // if(PIR3bits.TX1IF ==1){
+      //  PIR3bits.TX1IF =0;
+       // TX1REG = redata;
+   // }
 }

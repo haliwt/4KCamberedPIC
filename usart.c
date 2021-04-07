@@ -77,15 +77,16 @@ void USART_BlueToothInit(void)
   
 
     TX1STAbits.SYNC = 0;
-    RC1STAbits.SPEN = 1;
+    
 
     TX1STAbits.TXEN = 1;
 
      //Data receive RXD
-    RC1STAbits.RX9 = 0;  //8 bit reception enable
+    RC1STAbits.SPEN = 1; //Total switch Enable
+    RC1STAbits.RX9 = 0;  //The receive buffer is loaded and interrupt
     RC1STAbits.SREN = 1; //Single Receive Enable bit
     RC1STAbits.CREN = 1; //continuous Receive Enable bit
-
+    RC1STAbits.ADDEN = 0; //1
     /*串口初始化结束*/
 
   
@@ -93,18 +94,23 @@ void USART_BlueToothInit(void)
     BAUD1CONbits.BRG16 = 1; //??8??????
       SP1BRG =51;
     
-    PIR3bits.TX1IF=0;
+ //   PIR3bits.TX1IF=0;
     PIR3bits.RC1IF=0;
     
-    PIE3bits.TX1IE =1;
+   // PIE3bits.TX1IE =1;
     PIE3bits.RC1IE = 1; // 使能接收中断
     PEIE = 0X1; // 使能外部中断
     GIE = 0X1; // 开放全局中断
 
 }   
-
-
-
+/****************************************************************************
+    * 
+    * Function Name:void USART_BlueToothInit(void)
+    * Function:bluetooth uusart communication TX1 
+    * Input Ref:NO
+    * Return Ref:NO
+    * 
+ * *************************************************************************/
 void USART1_Init(void)
 {
 
