@@ -28,6 +28,7 @@ typedef struct _varref_
     uint8_t gPositionDown;
     uint8_t gCountUp;
     uint8_t gCountDown;
+    uint8_t gUnibolar_flag;
     
 }varref;
 
@@ -43,15 +44,19 @@ enum item
 
 };
 uint8_t RunStep;
-uint8_t RunMode;
+uint8_t RunMode_Rail;
+uint8_t RunMode_Disk;
 uint8_t lastMode;
 uint8_t Mode;
-uint8_t TKey;
+uint8_t TKeyUnibolar;
+uint8_t TKeyBibolar;
 
 typedef signed char int8_t;
-void  delay_us(uint16_t n);
-void SysMode(uint8_t vlu);
-void CheckRun(void);
+void  delay_10us(uint16_t n);
+void SysModeRail(uint8_t vlu);
+void SysModeDisk(uint8_t vlu);
+void CheckRunDisk(void);
+void CheckRunRail();
 
 
 

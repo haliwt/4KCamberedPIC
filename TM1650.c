@@ -86,11 +86,11 @@ void IIC_Stop_TM1650(void)
       asm("nop"); 
       asm("nop"); 
     SDA = 0;    //?????????
-   delay_us(2);
+   delay_10us(2);
     SCL= 1;   //??????????
-    delay_us(1);    //?? ????????????            
+    delay_10us(1);    //?? ????????????            
     SDA = 1;        //????????           
-    delay_us(2);    //?? ??????????   
+    delay_10us(2);    //?? ??????????   
 }
 /******************************************************************************
  ** 
@@ -105,13 +105,13 @@ void IIC_Ack_TM1650(void)
  //????????????????????????
  
   SET_SDA_OUT_TM1650();
-  delay_us(1);
+  delay_10us(1);
     SDA = 0;
-    delay_us(1);
+    delay_10us(1);
     SCL= 0;
-    delay_us(2);
+    delay_10us(2);
   SCL = 1;
-  delay_us(2);
+  delay_10us(2);
     //????? ?????? ??????
     SCL = 0;
 }
@@ -127,13 +127,13 @@ void IIC_NAck_TM1650(void)
 {
     //?????? ?????????????????
   SET_SDA_OUT_TM1650();
-  delay_us(1);
+  delay_10us(1);
     SDA = 1;
-    delay_us(1);
+    delay_10us(1);
   SCL= 0;
-  delay_us(2);
+  delay_10us(2);
     SCL = 1;
-    delay_us(2);
+    delay_10us(2);
     //????????? ??????
     SCL = 0;
 }
@@ -152,14 +152,14 @@ uint8_t IIC_Wait_Ack_TM1650(void)
     //??????????????????????????????
   SCL = 0;
   SET_SDA_OUT_TM1650();
-   asm("nop");  //delay_us(1);  
+   asm("nop");  //delay_10us(1);  
   SDA = 1;//
-  asm("nop"); //delay_us(2);
+  asm("nop"); //delay_10us(2);
   SET_SDA_IN_TM1650();//???????
   
     //?????
     SCL = 1;
-    asm("nop"); //delay_us(2);
+    asm("nop"); //delay_10us(2);
     asm("nop"); 
     //?????????
     while(SDA){
@@ -188,7 +188,7 @@ void IIC_WrByte_TM1650(uint8_t oneByte)
     //????????
     uint8_t i;
     SCL =0;
-    delay_us(1);
+    delay_10us(1);
     SET_SDA_OUT_TM1650();
     //????????????
     //    SCL = 0;
@@ -201,15 +201,15 @@ void IIC_WrByte_TM1650(uint8_t oneByte)
     else                     //  TM1650_DIO_L;
         SDA= 0;
           asm("nop"); 
-        //delay_us(1);
+        //delay_10us(1);
         SCL=1;
-        asm("nop"); //delay_us(1);
+        asm("nop"); //delay_10us(1);
         SCL=0;//TM1650_CLK_L;
-          asm("nop"); // delay_us(1);
+          asm("nop"); // delay_10us(1);
         oneByte<<=1;        
 
     }
-   //  delay_us(1);
+   //  delay_10us(1);
 }
 /******************************************************************************
  ** 

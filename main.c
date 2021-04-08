@@ -34,7 +34,7 @@
 #include "sensor.h"
 #include "led.h"
 
-
+uint8_t recBuf;
 
 void main(void) {
  
@@ -65,26 +65,27 @@ void main(void) {
 
      while(1)
      {
-       
+         
        if(power_on ==0 ){
            power_on ++;
            variate.gPositionUp =0;
            variate.gPositionDown =0;
            variate.gMotorDir=0;
-           RunMode = 0;
+           RunMode_Disk = 0;
+           RunMode_Rail = 0;
        }
-       else {
+       else if(variate.gMotorDir==1 || variate.gMotorDir==2){
                 if(variate.gMotorDir==1)
                     vim= ADCC_GetSingleConversion(channel_ANC4, 10);   //J8 UP
                 else if(variate.gMotorDir==2)
                         vim= ADCC_GetSingleConversion(channel_ANC5, 10); //J11 DOWN
-                if(variate.gMotorDir==1 ||variate.gMotorDir==2){
-                    mV=(vim * 5000)>>10; //mv =(vin *5000)/1024;
-                    if(mV < 600){
+               
+                mV=(vim * 5000)>>10; //mv =(vin *5000)/1024;
+                if(mV < 600){
                         LED1=0;
                         LED2 =0;
-                    }
-                    else if(mV >600){
+                }
+                else if(mV >600){
                         LED2=1;
                         LED1=1;
                      if(variate.gMotorDir==1){ //UP J9
@@ -98,14 +99,19 @@ void main(void) {
                             variate.gPositionDown=1;
                             variate.gPositionUp =0;
                         }
-                    }
                 }
+                
+            SysModeRail(TKeyBibolar);
+            CheckRunRail();
+          //  SysModeDisk(TKeyUnibolar);
+            CheckRunDisk();
        }
-
-       
-             // TKey =KEY_Scan();
-        SysMode(TKey);
-        CheckRun();
+       else if(variate.gUnibolar_flag==1){
+            SysModeDisk(TKeyUnibolar);
+            CheckRunDisk();
+           // SysModeRail(TKeyBibolar);
+            CheckRunRail();
+       }
         
 
     }
@@ -119,8 +125,7 @@ void main(void) {
 void __interrupt() Hallsensor(void)
 {
 
-     uint8_t recdata;
-     static uint8_t blink = 0, blink2 = 0, speedValueCCW,speedValueCW;
+    
     //TIMER0 overflow interrupter 1.0ms
     if(PIR0bits.TMR0IF == 1)
     {
@@ -147,79 +152,63 @@ void __interrupt() Hallsensor(void)
          }
          
     }
-    //usart interrupter 
-    if(PIR3bits.RC1IF==1 ) //???????????
-    {
-        PIR3bits.RC1IF = 0;
-
-        TX1REG=0x02; //???????????
-    }
+ 
     //PWM OF TIMER2
     if(PIR4bits.TMR2IF == 1){
         TMR2IF = 0;
         T2PR = 0xF9; //249 period = 0.002s (500Hz)
     }
-   
+    //unibolar motor
     if(PIR0bits.INT2IF ==1){ //CCW 
         PIR0bits.INT2IF= 0;
         Unipolar_StopMotor();
-        TKey = 2;
+        TKeyUnibolar = 2;
         LED1=1;
         LED2=0;
         DIRECTION=0;
         UNIPOLAR_ON = 0;  //run start 
         variate.gMotorDir=0;
-        speedValueCCW++;
-        if(speedValueCCW ==1){
-            
-            DelayStepUnibolar = 100;  //max -slowly
-        }
+        variate.gUnibolar_flag =1;
        
-        else {
-            DelayStepUnibolar = 10; //max  -fast
-            speedValueCCW =0;
-        }
     }
     if(PIR0bits.INT1IF ==1){  //CW
         PIR0bits.INT1IF = 0;
         Unipolar_StopMotor();
-        TKey = 1;
+        TKeyUnibolar = 1;
         LED2=1;
         LED1=0;
         UNIPOLAR_ON = 0; //run start
         DIRECTION=1;
-         variate.gMotorDir=0;
-        speedValueCW++;
-        if (speedValueCW == 1){
-
-            DelayStepUnibolar = 100; //max -slowly
-        }
-        else {
-            DelayStepUnibolar = 10; //max  -fast
-            speedValueCW = 0;
-        }
+        variate.gMotorDir=0;
+        variate.gUnibolar_flag=1;
+       
     }
-
+    //Stop motor 
     if (IOCBFbits.IOCBF3 == 1) //STOP 
     { 
         IOCBFbits.IOCBF3 = 0;
         variate.gMotorDir=0;
-         TKey = 4;
+        variate.gUnibolar_flag=0;
          HALF_PHASE = 1;
          ONE_PHASE =1;
         Unipolar_StopMotor();
         DRV8818_Stop();
         variate.gPositionUp =0;
         variate.gPositionDown =0;
+        RunMode_Disk = 0;
+        RunMode_Rail = 0;
+        
+
     }
+    //unibolar motor 
     if (IOCBFbits.IOCBF4 == 1)//SW4 J8-TO motor 
     { //UP
-        //LED2 = 0;
         IOCBFbits.IOCBF4 = 0;
-        TKey = 8;
+        TKeyBibolar = 8;
         SENSOR_POWER_UP =0;  //J8
         variate.gMotorDir=1;
-        if(variate.gPositionUp ==1){
+        
+        if(variate.gPositionUp ==1){  // if the sensor be tected brake signal ,stop motor
             DRV8818_Stop();
             variate.gPositionDown =0;
             variate.gCountUp=0;
@@ -227,15 +216,14 @@ void __interrupt() Hallsensor(void)
     }
     if (IOCBFbits.IOCBF5 == 1) //SW3 -J11--T0 -BACK mtor DOWN
     {   //DOWN
-        //LED1 =0;
-        // LED2 =0 ;
         IOCBFbits.IOCBF5 = 0;
-        TKey = 9;
+        TKeyBibolar = 9;
         SENSOR_POWER_DOWN =0;  //POWER RE0 J11  PORTC = RC4
          variate.gMotorDir=2;
-        if(variate.gPositionDown ==1){
+     
+        if(variate.gPositionDown ==1){ //if the sensor be dector ,stop motor
             DRV8818_Stop();
-            variate.gPositionUp=0;
+            variate.gPositionUp=0;  // the motor run after 1s , clear brake
             variate.gCountDown =0;
         }
     }
@@ -245,9 +233,9 @@ void __interrupt() Hallsensor(void)
 
         PIR3bits.RC1IF = 0;
 
-        recdata = RC1REG; // 接收数据并存储
+        recBuf = RC1REG; // 接收数据并存储
 
-        TX1REG = recdata; // 返送接收到的数据 // 把接
+        TX1REG = recBuf; // 返送接收到的数据 // 把接
 
        // 收到的数据发送回去
     }

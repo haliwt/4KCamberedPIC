@@ -44,7 +44,7 @@
 
 extern uint8_t pmlog ;
 
-
+void Digital_Init(void);
 //const unsigned char GreeNumber[];
 
 //const unsigned char BlueNumber[];
