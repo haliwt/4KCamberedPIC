@@ -73,6 +73,8 @@ void main(void) {
            variate.gMotorDir=0;
            RunMode_Disk = 0;
            RunMode_Rail = 0;
+            Unipolar_StopMotor();
+            DRV8818_Stop();
        }
        else if(variate.gMotorDir==1 || variate.gMotorDir==2){
                 if(variate.gMotorDir==1)
@@ -92,13 +94,12 @@ void main(void) {
                              DRV8818_Stop();
                             variate.gPositionUp=1;
                             variate.gPositionDown =0;
-                            
-                        }
-                        else if(variate.gMotorDir==2){ //DWON J11
+                     }
+                    else if(variate.gMotorDir==2){ //DWON J11
                              DRV8818_Stop();
                             variate.gPositionDown=1;
                             variate.gPositionUp =0;
-                        }
+                    }
                 }
             TX1REG = 0x01;
             CheckRunRail(TKeyBibolar);

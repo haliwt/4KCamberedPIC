@@ -43,14 +43,9 @@ void DRV8818_MotorDriver(void)
    // USM0 = 0;
    // USM1 = 0;
             STEP_DRV = 1;
-            __delay_ms(DelayBi);
+            delay_10us(1);
             STEP_DRV = 0;
-            __delay_ms(DelayBi);
-           
-       
-       
-       
-    
+            delay_10us(1);
 }
 /****************************************************************************
     *
