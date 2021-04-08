@@ -66,6 +66,31 @@ void main(void) {
      while(1)
      {
          
+       if(variate.gMotorDir==1)
+            vim= ADCC_GetSingleConversion(channel_ANC4, 10);   //J8 UP
+        else if(variate.gMotorDir==2)
+            vim= ADCC_GetSingleConversion(channel_ANC5, 10); //J11 DOWN
+               
+        mV=(vim * 5000)>>10; //mv =(vin *5000)/1024;
+        if(mV < 600){
+                LED1=0;
+                LED2 =0;
+        }
+        else if(mV >600){
+                LED2=1;
+                LED1=1;
+                if(variate.gMotorDir==1){ //UP J9
+                        DRV8818_Stop();
+                    variate.gPositionUp=1;
+                    variate.gPositionDown =0;
+                }
+            else if(variate.gMotorDir==2){ //DWON J11
+                        DRV8818_Stop();
+                    variate.gPositionDown=1;
+                    variate.gPositionUp =0;
+            }
+        }
+       
        if(power_on ==0 ){
            power_on ++;
            variate.gPositionUp =0;
@@ -76,54 +101,17 @@ void main(void) {
             Unipolar_StopMotor();
             DRV8818_Stop();
        }
-       else if(variate.gMotorDir==1 || variate.gMotorDir==2){
-                if(variate.gMotorDir==1)
-                    vim= ADCC_GetSingleConversion(channel_ANC4, 10);   //J8 UP
-                else if(variate.gMotorDir==2)
-                        vim= ADCC_GetSingleConversion(channel_ANC5, 10); //J11 DOWN
-               
-                mV=(vim * 5000)>>10; //mv =(vin *5000)/1024;
-                if(mV < 600){
-                        LED1=0;
-                        LED2 =0;
-                }
-                else if(mV >600){
-                        LED2=1;
-                        LED1=1;
-                     if(variate.gMotorDir==1){ //UP J9
-                             DRV8818_Stop();
-                            variate.gPositionUp=1;
-                            variate.gPositionDown =0;
-                     }
-                    else if(variate.gMotorDir==2){ //DWON J11
-                             DRV8818_Stop();
-                            variate.gPositionDown=1;
-                            variate.gPositionUp =0;
-                    }
-                }
-            TX1REG = 0x01;
-            CheckRunRail(TKeyBibolar);
-        }
-       else if(variate.gUnibolar_flag==1){
-            TX1REG = 0x2 ;
-            CheckRunDisk(TKeyUnibolar);
-           
-       }
        else{
 
-        variate.gMotorDir=0;
-        variate.gUnibolar_flag=0;
-         HALF_PHASE = 1;
-         ONE_PHASE =1;
-        Unipolar_StopMotor();
-        DRV8818_Stop();
-        variate.gPositionUp =0;
-        variate.gPositionDown =0;
-        RunMode_Disk = 0;
-        RunMode_Rail = 0;
-
-
-       }
+            TX1REG = 0x01;
+            if( variate.gMotorDir==0 && variate.gUnibolar_flag ==1){
+                  StepUnibolar_Driver();
+            }
+            else 
+               CheckRunRail(TKeyBibolar);
+        }
+     
+      
         
 
     }
@@ -182,7 +170,6 @@ void __interrupt() Hallsensor(void)
          HALF_PHASE = 1; //PIN10 =0 8 step
         DIRECTION=0;
         UNIPOLAR_ON = 0;  //run start 
-        variate.gMotorDir=0;
         variate.gUnibolar_flag =1;
        
     }
@@ -197,7 +184,6 @@ void __interrupt() Hallsensor(void)
         HALF_PHASE = 1; //PIN10 =0 8 step
         UNIPOLAR_ON = 0; //run start
         DIRECTION=1;
-        variate.gMotorDir=0;
         variate.gUnibolar_flag=1;
        
     }
@@ -231,7 +217,6 @@ void __interrupt() Hallsensor(void)
         USM1 = 0;
         SENSOR_POWER_UP =0;  //J8
         variate.gMotorDir=1;
-        variate.gUnibolar_flag=0;
         if(variate.gPositionUp ==1){  // if the sensor be tected brake signal ,stop motor
             DRV8818_Stop();
             variate.gPositionDown =0;
@@ -250,7 +235,6 @@ void __interrupt() Hallsensor(void)
         USM1 = 0;
         SENSOR_POWER_DOWN =0;  //POWER RE0 J11  PORTC = RC4
          variate.gMotorDir=2;
-          variate.gUnibolar_flag=0;
         if(variate.gPositionDown ==1){ //if the sensor be dector ,stop motor
             DRV8818_Stop();
             variate.gPositionUp=0;  // the motor run after 1s , clear brake

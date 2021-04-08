@@ -178,15 +178,18 @@ void CheckRunDisk(uint8_t uval)
     case unibolar_CW:
     {
          TX1REG = 0xa1;
-         StepUnibolar_Driver();
          
         if(TKeyBibolar == 3){
             if( variate.gPositionUp==1){
                 DRV8818_Stop();
                 variate.gPositionDown=0; 
                 variate.gCountUp=0;
+                 StepUnibolar_Driver();
             }
-            else  DRV8818_MotorDriver();
+            else{
+                  DRV8818_MotorDriver();
+                  StepUnibolar_Driver();
+            }
             if(variate.gCountDown >1)variate.gPositionDown =0;
         }
         if(TKeyBibolar ==4){ //Down
@@ -194,28 +197,36 @@ void CheckRunDisk(uint8_t uval)
                         DRV8818_Stop();
                         variate.gPositionUp=0;
                         variate.gCountDown =0;
+                         StepUnibolar_Driver();
             }  //
-            else  DRV8818_MotorDriver();
+            else{
+                  DRV8818_MotorDriver();
+                  StepUnibolar_Driver();
+            }
             if(variate.gCountUp >1)variate.gPositionUp =0;
         }
+        else{
+             StepUnibolar_Driver();
+         
+        }
 
-            
-
-        
     }
     break;
 
     case unibolar_CCW: //SW1
     {
          TX1REG = 0xa2;
-        StepUnibolar_Driver();
-        if(TKeyBibolar == 3){
+         if(TKeyBibolar == 3){
             if( variate.gPositionUp==1){
                 DRV8818_Stop();
                 variate.gPositionDown=0; 
                 variate.gCountUp=0;
+                 StepUnibolar_Driver();
             }
-            else  DRV8818_MotorDriver();
+            else{
+                  DRV8818_MotorDriver();
+                  StepUnibolar_Driver();
+            }
             if(variate.gCountDown >1)variate.gPositionDown =0;
         }
         if(TKeyBibolar ==4){ //Down
@@ -223,10 +234,19 @@ void CheckRunDisk(uint8_t uval)
                         DRV8818_Stop();
                         variate.gPositionUp=0;
                         variate.gCountDown =0;
+                         StepUnibolar_Driver();
             }  //
-            else  DRV8818_MotorDriver();
+            else{
+                  DRV8818_MotorDriver();
+                 StepUnibolar_Driver();
+            }
             if(variate.gCountUp >1)variate.gPositionUp =0;
         }
+        else{
+             StepUnibolar_Driver();
+         
+        }
+
 
         
 
