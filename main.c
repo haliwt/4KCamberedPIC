@@ -177,6 +177,9 @@ void __interrupt() Hallsensor(void)
         TKeyUnibolar = 2;
         LED1=1;
         LED2=0;
+        UNIPOLAR_ON = 0;
+        ONE_PHASE = 0;  //PIN9 - half phase
+         HALF_PHASE = 1; //PIN10 =0 8 step
         DIRECTION=0;
         UNIPOLAR_ON = 0;  //run start 
         variate.gMotorDir=0;
@@ -189,6 +192,9 @@ void __interrupt() Hallsensor(void)
         TKeyUnibolar = 1;
         LED2=1;
         LED1=0;
+        UNIPOLAR_ON = 0;
+        ONE_PHASE = 0;  //PIN9 - half phase
+        HALF_PHASE = 1; //PIN10 =0 8 step
         UNIPOLAR_ON = 0; //run start
         DIRECTION=1;
         variate.gMotorDir=0;

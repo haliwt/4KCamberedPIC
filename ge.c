@@ -118,6 +118,7 @@ void CheckRunRail(uint8_t bval)
 
         case bibolar_UP: //SW3
             TX1REG = 0xb1;
+
             if( variate.gPositionUp==1){
                 DRV8818_Stop();
                 variate.gPositionDown=0; 
@@ -125,11 +126,11 @@ void CheckRunRail(uint8_t bval)
                 StepUnibolar_Driver();
             }
             else {
-                DRV8818_MotorDriver();
-                StepUnibolar_Driver();
+                 DRV8818_MotorDriver();
+                 StepUnibolar_Driver();
             }
             if(variate.gCountDown >1)variate.gPositionDown =0;
-
+           
 
         break;
 
@@ -146,7 +147,8 @@ void CheckRunRail(uint8_t bval)
                 StepUnibolar_Driver();
             }
             if(variate.gCountUp >1)variate.gPositionUp =0;
-
+            
+                
         break;
 
     }
@@ -162,7 +164,7 @@ void CheckRunRail(uint8_t bval)
 void CheckRunDisk(uint8_t uval)
 {
      if(!uval) return ;
-     
+
     switch (uval)
     {
 

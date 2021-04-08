@@ -77,8 +77,8 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
  void Unipolar_StopMotor(void)
  {
      UNIPOLAR_ON = 1;
-    // HALF_PHASE = 1;
-    // ONE_PHASE =1;
+     HALF_PHASE = 1;
+     ONE_PHASE =1;
  
  }
  /****************************************************************************
@@ -92,9 +92,9 @@ void Stepper_UnipolarMotor(int revcnt, uint8_t revdir)
  void StepUnibolar_Driver(void)
  {
 
-     UNIPOLAR_ON = 0;
-     ONE_PHASE = 0;  //PIN9 - half phase
-     HALF_PHASE = 1; //PIN10 =0 8 step
+   //  UNIPOLAR_ON = 0;
+    // ONE_PHASE = 0;  //PIN9 - half phase
+    // HALF_PHASE = 1; //PIN10 =0 8 step
      STEP = 1;
      __delay_ms(Delay);//delay_us(500); //delay_us(10)//delay_us(100);//__delay_ms(Delay);
      STEP = 0;
