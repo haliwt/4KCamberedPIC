@@ -14,7 +14,7 @@
 #define ENABLE_DRV PORTCbits.RC0
 
 void DRV8818_Motor_Init(void);
-void DRV8818_MotorDriver(int16_t revct, uint8_t val);
+void DRV8818_MotorDriver(void);
 
 void PWM2_Initialize(void);
 void PWM2_LoadDutyValue(uint16_t dutyValue);

@@ -32,13 +32,12 @@ typedef struct _varref_
     
 }varref;
 
-varref variate;
+ varref variate;
 enum item
 {
     Nothing,
     unibolar_CW,
     unibolar_CCW,
-    motorStop,
     bibolar_UP,
     bibolar_DOWN
 
@@ -55,8 +54,8 @@ typedef signed char int8_t;
 void  delay_10us(uint16_t n);
 void SysModeRail(uint8_t vlu);
 void SysModeDisk(uint8_t vlu);
-void CheckRunDisk(void);
-void CheckRunRail();
+void CheckRunDisk(uint8_t uval);
+void CheckRunRail(uint8_t bval);
 
 
 

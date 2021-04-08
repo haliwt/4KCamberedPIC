@@ -100,17 +100,28 @@ void main(void) {
                             variate.gPositionUp =0;
                         }
                 }
-                
-            SysModeRail(TKeyBibolar);
-            CheckRunRail();
-          //  SysModeDisk(TKeyUnibolar);
-            CheckRunDisk();
-       }
+            TX1REG = 0x01;
+            CheckRunRail(TKeyBibolar);
+        }
        else if(variate.gUnibolar_flag==1){
-            SysModeDisk(TKeyUnibolar);
-            CheckRunDisk();
-           // SysModeRail(TKeyBibolar);
-            CheckRunRail();
+            TX1REG = 0x2 ;
+            CheckRunDisk(TKeyUnibolar);
+           
+       }
+       else{
+
+        variate.gMotorDir=0;
+        variate.gUnibolar_flag=0;
+         HALF_PHASE = 1;
+         ONE_PHASE =1;
+        Unipolar_StopMotor();
+        DRV8818_Stop();
+        variate.gPositionUp =0;
+        variate.gPositionDown =0;
+        RunMode_Disk = 0;
+        RunMode_Rail = 0;
+
+
        }
         
 
@@ -161,7 +172,7 @@ void __interrupt() Hallsensor(void)
     //unibolar motor
     if(PIR0bits.INT2IF ==1){ //CCW 
         PIR0bits.INT2IF= 0;
-        Unipolar_StopMotor();
+      //  Unipolar_StopMotor();
         TKeyUnibolar = 2;
         LED1=1;
         LED2=0;
@@ -173,7 +184,7 @@ void __interrupt() Hallsensor(void)
     }
     if(PIR0bits.INT1IF ==1){  //CW
         PIR0bits.INT1IF = 0;
-        Unipolar_StopMotor();
+      //  Unipolar_StopMotor();
         TKeyUnibolar = 1;
         LED2=1;
         LED1=0;
@@ -204,10 +215,16 @@ void __interrupt() Hallsensor(void)
     if (IOCBFbits.IOCBF4 == 1)//SW4 J8-TO motor 
     { //UP
         IOCBFbits.IOCBF4 = 0;
-        TKeyBibolar = 8;
+        TKeyBibolar = 3;
+        DIR =0;
+        SLEEP_DRV = 1;
+        SRN = 0;
+        ENABLE_DRV = 0;
+        USM0 = 0;
+        USM1 = 0;
         SENSOR_POWER_UP =0;  //J8
         variate.gMotorDir=1;
-        
+        variate.gUnibolar_flag=0;
         if(variate.gPositionUp ==1){  // if the sensor be tected brake signal ,stop motor
             DRV8818_Stop();
             variate.gPositionDown =0;
@@ -217,17 +234,23 @@ void __interrupt() Hallsensor(void)
     if (IOCBFbits.IOCBF5 == 1) //SW3 -J11--T0 -BACK mtor DOWN
     {   //DOWN
         IOCBFbits.IOCBF5 = 0;
-        TKeyBibolar = 9;
+        TKeyBibolar = 4;
+        DIR = 1;
+        SLEEP_DRV = 1;
+        SRN = 0;
+        ENABLE_DRV = 0;
+        USM0 = 0;
+        USM1 = 0;
         SENSOR_POWER_DOWN =0;  //POWER RE0 J11  PORTC = RC4
          variate.gMotorDir=2;
-     
+          variate.gUnibolar_flag=0;
         if(variate.gPositionDown ==1){ //if the sensor be dector ,stop motor
             DRV8818_Stop();
             variate.gPositionUp=0;  // the motor run after 1s , clear brake
             variate.gCountDown =0;
         }
     }
-    
+    //USART1 interrupt
     if(PIR3bits.RC1IF ==1)//） // 判断是否为串口接收中断
     {
 

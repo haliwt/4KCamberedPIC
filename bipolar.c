@@ -33,42 +33,24 @@ void DRV8818_Motor_Init(void)
     * Return Ref:NO
     * 
  ****************************************************************************/
-void DRV8818_MotorDriver(int16_t revcnt, uint8_t dir)
+void DRV8818_MotorDriver(void)
 {
-    uint16_t k, p;
+   // uint16_t k, p;
 
-    SLEEP_DRV = 1;
-    SRN = 0;
-    ENABLE_DRV = 0;
-    USM0 = 0;
-    USM1 = 0;
-
-    if (revcnt < 0)
-    {
-        DIR = dir;
-        while (1)
-        {
-            STEP_DRV = 1;
-            __delay_ms(DelayBi);
-            STEP_DRV = 0;
-            __delay_ms(DelayBi);
-        }
-    }
-    else
-    {
-        p = (uint16_t)(revcnt * Step_BiCount); //Step_Count = 360/Step_angle
-        DIR = dir;
-        for (k = 0; k < p; k++)
-        {
+   // SLEEP_DRV = 1;
+   // SRN = 0;
+   // ENABLE_DRV = 0;
+   // USM0 = 0;
+   // USM1 = 0;
             STEP_DRV = 1;
             __delay_ms(DelayBi);
             STEP_DRV = 0;
             __delay_ms(DelayBi);
            
-        }
        
        
-    }
+       
+    
 }
 /****************************************************************************
     *

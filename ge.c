@@ -4,6 +4,7 @@
 #include "key.h"
 #include "led.h"
 #include "sensor.h"
+#include "usart.h"
 /******************************************************************
     *
     *Function Name:void delay_us(uint16_t n)
@@ -17,8 +18,8 @@ void  delay_10us(uint16_t n)
     uint16_t i,j=0;
     for(j=0;j<n;j++){
         for(i=0;i<5;i++){
-            __asm("NOP");  //1 one cycle
-            __asm("NOP");  //1 one cycle 
+            __asm("nop");  //1 one cycle
+            __asm("nop");  //1 one cycle 
         }                  //2 one cycle
     }
     
@@ -99,48 +100,53 @@ void SysModeDisk(uint8_t val)
     *Return Ref:NO
     *
 *******************************************************************/
-void CheckRunRail(void)
+void CheckRunRail(uint8_t bval)
 {
     
-    switch (RunMode_Rail)
+    switch (bval)
     {
 
-    case Nothing:
-         DRV8818_Stop();
-        variate.gPositionUp =0;
-        variate.gPositionDown =0;
-
-        break;
-
-    case bibolar_UP: //SW3
-        if( variate.gPositionUp==1){
+        case Nothing:
             DRV8818_Stop();
-            variate.gPositionDown=0; 
-            variate.gCountUp=0;
-        }
-        else  DRV8818_MotorDriver(1, 1);
-        if(variate.gCountDown >1)variate.gPositionDown =0;
+            variate.gPositionUp =0;
+            variate.gPositionDown =0;
+
+            break;
+
+        case bibolar_UP: //SW3
+            TX1REG = 0xb1;
+            if( variate.gPositionUp==1){
+                DRV8818_Stop();
+                variate.gPositionDown=0; 
+                variate.gCountUp=0;
+                StepUnibolar_Driver();
+            }
+            else {
+                DRV8818_MotorDriver();
+                StepUnibolar_Driver();
+            }
+            if(variate.gCountDown >1)variate.gPositionDown =0;
+
 
         break;
 
-    case bibolar_DOWN:
-        if( variate.gPositionDown==1){
-             DRV8818_Stop();
-             variate.gPositionUp=0;
-             variate.gCountDown =0;
-        }  //
-        else
-            DRV8818_MotorDriver(1, 0);
-        if(variate.gCountUp >1)variate.gPositionUp =0;
+        case bibolar_DOWN:
+            TX1REG =0xb2;
+            if( variate.gPositionDown==1){
+                DRV8818_Stop();
+                variate.gPositionUp=0;
+                variate.gCountDown =0;
+                StepUnibolar_Driver();
+            }  //
+            else{
+                DRV8818_MotorDriver();
+                StepUnibolar_Driver();
+            }
+            if(variate.gCountUp >1)variate.gPositionUp =0;
 
         break;
 
-    default:
-
-        break;
-        
     }
-   
 }
 /******************************************************************
     *
@@ -150,10 +156,10 @@ void CheckRunRail(void)
     *Return Ref:NO
     *
 *******************************************************************/
-void CheckRunDisk(void)
+void CheckRunDisk(uint8_t uval)
 {
 
-    switch (RunMode_Disk)
+    switch (uval)
     {
 
     case Nothing:
@@ -164,22 +170,59 @@ void CheckRunDisk(void)
         break;
 
     case unibolar_CW:
+    {
+         TX1REG = 0xa1;
+         StepUnibolar_Driver();
+         
+        if( variate.gPositionUp==1){
+            DRV8818_Stop();
+            variate.gPositionDown=0; 
+            variate.gCountUp=0;
+        }
+        else  DRV8818_MotorDriver();
+        if(variate.gCountDown >1)variate.gPositionDown =0;
 
-        StepUnibolar_Driver();
+        if( variate.gPositionDown==1){
+                    DRV8818_Stop();
+                    variate.gPositionUp=0;
+                    variate.gCountDown =0;
+        }  //
+        else  DRV8818_MotorDriver();
+        if(variate.gCountUp >1)variate.gPositionUp =0;
 
-        break;
+            
 
-    case unibolar_CCW: //SW1
-
-        StepUnibolar_Driver();
-     break;
-
-   
-      
-    default:
-
-        break;
         
     }
+    break;
+
+    case unibolar_CCW: //SW1
+    {
+         TX1REG = 0xa2;
+        StepUnibolar_Driver();
+        if( variate.gPositionUp==1){
+            DRV8818_Stop();
+            variate.gPositionDown=0; 
+            variate.gCountUp=0;
+        }
+        else  DRV8818_MotorDriver();
+        if(variate.gCountDown >1)variate.gPositionDown =0;
+
+        if( variate.gPositionDown==1){
+                    DRV8818_Stop();
+                    variate.gPositionUp=0;
+                    variate.gCountDown =0;
+        }  //
+        else  DRV8818_MotorDriver();
+        if(variate.gCountUp >1)variate.gPositionUp =0;
+
+        
+
+    }
+    break;
+
+        
+    }
+   
    
 }
